@@ -163,7 +163,7 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
             <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#888", marginBottom:3 }}>{activeType}</p>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
               <div style={{ fontSize:24, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.02em", lineHeight:1 }}>{activeItem.word}</div>
-              <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#999", fontSize:20, cursor:"pointer", padding:0, marginTop:2 }}></button>
+              <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#999", fontSize:20, cursor:"pointer", padding:0, marginTop:2 }}>×</button>
             </div>
             <p style={{ fontSize:12, fontStyle:"italic", color:"#555", lineHeight:1.45, marginTop:8 }}>{activeItem.strap}</p>
           </div>
