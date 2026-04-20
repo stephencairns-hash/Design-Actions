@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const R = "18px";
 const G = "2px";
-const GL = "#f5f3ef";
+const GL = "#ffffff";
 
 const GROUPS = [
   { id: 1, label: "sense",   color: "#9aa89a", tint: "#dde0db", text: "#1a1a1a" },
@@ -198,7 +198,7 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
         </div>
         {sel && otherSelected && (
           <div style={{ background:g.tint, borderRadius:contentRadius, padding:"0 18px 18px" }}>
-            <button onClick={() => onSelect("save", null)} style={{ width:"100%", background:"#1a1a1a", color:"#f5f3ef", border:"none", borderRadius:4, padding:10, fontSize:11, letterSpacing:"0.06em", cursor:"pointer" }}>
+            <button onClick={() => onSelect("save", null)} style={{ width:"100%", background:"#1a1a1a", color:"#ffffff", border:"none", borderRadius:4, padding:10, fontSize:11, letterSpacing:"0.06em", cursor:"pointer" }}>
               save to journey →
             </button>
           </div>
@@ -446,7 +446,7 @@ export default function DesignActions() {
   const [selContour, setSelContour] = useState(null);
   const [journey, setJourney]       = useState([]);
 
-  const bg = "#f5f3ef", fg = "#1a1a1a";
+  const bg = "#ffffff", fg = "#1a1a1a";
 
   const handleOpen = (item) => setOpenItem(prev => prev?.id === item?.id ? null : item);
 
@@ -528,7 +528,7 @@ export default function DesignActions() {
       )}
 
       {/* NAV */}
-      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#f5f3ef", borderTop:"1px solid #d8d4ce", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
+      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#ffffff", borderTop:"1px solid #e0ddd8", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
         {[["home","cues & contours"],["journey", journey.length > 0 ? `journey · ${journey.length}` : "journey"]].map(([s,label]) => (
           <button key={s} onClick={() => setScreen(s)} style={{ background:"none", border:"none", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
             <div style={{ width:3, height:3, borderRadius:"50%", background:screen===s?"#1a1a1a":"transparent" }}/>
