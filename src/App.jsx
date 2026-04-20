@@ -221,21 +221,21 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   );
 }
 
-//  Journey cell 
+//  Journey cell — simple flip showing word then strap
 function JCell({ item, type, pos, side, onRemove, showRemove }) {
   const [flipped, setFlipped] = useState(false);
   const g = getGroup(item.group);
   return (
-    <div onClick={() => setFlipped(f=>!f)} style={{ background:g.tint, borderRadius:cr(pos,side), minHeight:50, cursor:"pointer", display:"flex", flexDirection:"column", justifyContent:flipped?"flex-start":"center", alignItems:flipped?"flex-start":"center", padding:flipped?"14px 12px 12px":"0 8px", transition:"padding .2s ease", overflow:"hidden" }}>
+    <div onClick={() => setFlipped(f=>!f)} style={{ background:g.tint, borderRadius:cr(pos,side), minHeight:50, cursor:"pointer", display:"flex", flexDirection:"column", justifyContent:flipped?"flex-start":"center", alignItems:flipped?"flex-start":"center", padding:flipped?"14px 12px 14px":"0 8px", transition:"padding .2s ease", overflow:"hidden" }}>
       {!flipped ? (
         <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em", textAlign:"center" }}>{item.word}</span>
       ) : (
         <>
-          <p style={{ fontSize:8, letterSpacing:"0.16em", textTransform:"uppercase", color:"#888", marginBottom:5 }}>{type}</p>
+          <p style={{ fontSize:9, letterSpacing:"0.16em", textTransform:"uppercase", color:"#888", marginBottom:6 }}>{type}</p>
           <div style={{ fontSize:16, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.015em", marginBottom:8, lineHeight:1.1 }}>{item.word}</div>
-          <p style={{ fontSize:11, fontWeight:300, color:"#555", lineHeight:1.5, marginBottom:showRemove?10:0 }}>{item.strap}</p>
+          <p style={{ fontSize:12, fontStyle:"italic", color:"#555", lineHeight:1.5, marginBottom:showRemove?12:0 }}>{item.strap}</p>
           {showRemove && (
-            <button onClick={e=>{e.stopPropagation();onRemove();}} style={{ background:"none", color:"#888", border:"1px solid #ccc", borderRadius:3, padding:"5px 10px", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer" }}>remove</button>
+            <button onClick={e=>{e.stopPropagation();onRemove();}} style={{ background:"none", color:"#aaa", border:"1px solid #ddd", borderRadius:3, padding:"5px 12px", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer" }}>remove pair</button>
           )}
         </>
       )}
@@ -243,7 +243,26 @@ function JCell({ item, type, pos, side, onRemove, showRemove }) {
   );
 }
 
-//  Here Now tab pair 
+
+//  Journey grid
+function JourneyGrid({ journey, onRemove }) {
+  return (
+    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
+      {journey.map(step => {
+        const cueMeta     = { pos:getItemPos(step.cue,     "cue"),     side:"left"  };
+        const contourMeta = { pos:getItemPos(step.contour, "contour"), side:"right" };
+        return [
+          <JCell key={`c-${step.id}`}  item={step.cue}     type="cue"     pos={cueMeta.pos}     side={cueMeta.side}     onRemove={() => onRemove(step.id)} showRemove={true}  />,
+          <JCell key={`co-${step.id}`} item={step.contour} type="contour" pos={contourMeta.pos} side={contourMeta.side} onRemove={() => onRemove(step.id)} showRemove={false} />,
+        ];
+      })}
+      <HereNowTab journey={journey} />
+    </div>
+  );
+}
+
+
+// ─── Here Now tab pair ────────────────────────────────────────────────────────
 const HN_BG   = "#1a1a1a";
 const HN_TEXT = "#e8e4de";
 
@@ -287,8 +306,11 @@ function HereNowTab({ journey }) {
     setAiStatus("thinking");
     setAiText("");
     const place = await getLocation();
-    const pairs = journey.map(s => `${s.cue.word} -- ${s.contour.word}`).join("\n");
-    const prompt = `You are a design advisor working with a toolkit called Design Actions. The user is currently at: ${place}.\n\nTheir selected design action pairs are:\n${pairs}\n\nWrite a short, evocative, place-specific text of around 150200 words that interprets these design actions for this specific location right now. Be concrete and grounded in the actual place -- its character, its challenges, its possibilities. Do not write generic design advice. Write as if you are standing there with the user. Use a thoughtful, direct tone. Write as flowing prose with no bullet points or headers.`;
+    const pairNames = journey.map(s => `${s.cue.word} — ${s.contour.word}`).join(", ");
+    const pairs = journey.map(s =>
+      `${s.cue.word} (cue): ${s.cue.desc.replace(/\n\n/g, " ")}\n${s.contour.word} (contour): ${s.contour.desc.replace(/\n\n/g, " ")}`
+    ).join("\n\n");
+    const prompt = `You are a design advisor working with a toolkit called Design Actions. Cues are verbs that orient design action. Contours are nouns that define the terrain of inquiry. Together they frame a design situation.\n\nThe user is currently at: ${place}.\n\nTheir selected design action pairs are: ${pairNames}\n\nHere are the full definitions of each:\n\n${pairs}\n\nUsing these definitions as your conceptual foundation, write a short, evocative, place-specific text of around 150-200 words that interprets these design actions for this specific location right now. Be concrete and grounded in the actual place — its character, its challenges, its possibilities. Do not write generic design advice. Write as if you are standing there with the user. Use a thoughtful, direct tone. Write as flowing prose with no bullet points or headers.`;
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -334,7 +356,6 @@ function HereNowTab({ journey }) {
           borderRadius: open ? "0" : `0 0 0 ${R}`,
           border:`1px solid #333`, height:44, cursor:"pointer",
           display:"flex", alignItems:"center", justifyContent:"center",
-          opacity: !open || activeTab === "here" ? 1 : 0.55,
           fontSize:15, fontWeight:400, letterSpacing:"-0.01em",
           position:"relative", overflow:"hidden",
           borderBottom: open && activeTab !== "here" ? `2px solid ${HN_TEXT}` : "none",
@@ -347,7 +368,6 @@ function HereNowTab({ journey }) {
           borderRadius: open ? "0" : `0 0 ${R} 0`,
           border:`1px solid #333`, height:44, cursor:"pointer",
           display:"flex", alignItems:"center", justifyContent:"center",
-          opacity: !open || activeTab === "now" ? 1 : 0.55,
           fontSize:15, fontWeight:400, letterSpacing:"-0.01em",
           position:"relative", overflow:"hidden",
           borderBottom: open && activeTab !== "now" ? `2px solid ${HN_TEXT}` : "none",
@@ -357,12 +377,12 @@ function HereNowTab({ journey }) {
         </button>
       </div>
       {open && (
-        <div style={{ background:HN_BG, borderRadius:`0 0 ${R} ${R}`, border:`1px solid #333`, borderTop:"none", padding:"16px 18px 20px", animation:"openCard .2s ease", maxHeight:"55vh", overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
+        <div style={{ background:HN_BG, borderRadius:`0 0 ${R} ${R}`, border:`1px solid #333`, borderTop:"none", padding:"16px 18px 20px", maxHeight:"55vh", overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
           {activeTab === "here" && (
             <>
               <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:HN_TEXT, opacity:0.35, marginBottom:8 }}>location</p>
               {locLoading
-                ? <p style={{ fontSize:13, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>locating...</p>
+                ? <p style={{ fontSize:13, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>locating…</p>
                 : <p style={{ fontSize:15, fontWeight:400, color:HN_TEXT, lineHeight:1.45 }}>{placeName || "tap now to generate a brief"}</p>
               }
             </>
@@ -373,13 +393,13 @@ function HereNowTab({ journey }) {
               {aiStatus === "thinking" && (
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <div style={{ width:5, height:5, borderRadius:"50%", background:HN_TEXT, opacity:0.3, animation:"pulse 1s infinite" }}/>
-                  <p style={{ fontSize:12, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>thinking...</p>
+                  <p style={{ fontSize:12, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>thinking…</p>
                 </div>
               )}
               {(aiStatus === "done" || aiStatus === "error") && (
                 <>
                   <p style={{ fontSize:13, fontWeight:300, color:HN_TEXT, opacity:0.85, lineHeight:1.8 }}>{aiText}</p>
-                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:`1px solid #333`, borderRadius:4, padding:"6px 12px", fontSize:10, color:HN_TEXT, opacity:0.4, cursor:"pointer", letterSpacing:"0.08em" }}>regenerate </button>
+                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:`1px solid #333`, borderRadius:4, padding:"6px 12px", fontSize:10, color:HN_TEXT, opacity:0.4, cursor:"pointer", letterSpacing:"0.08em" }}>regenerate →</button>
                 </>
               )}
             </>
@@ -390,7 +410,7 @@ function HereNowTab({ journey }) {
   );
 }
 
-//  Uniform home grid 
+// ─── Uniform home grid ─────────────────────────────────────────────────────────
 function UniformGrid({ selCue, selContour, onSelect, openItem, onOpen }) {
   return (
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
@@ -413,24 +433,7 @@ function UniformGrid({ selCue, selContour, onSelect, openItem, onOpen }) {
   );
 }
 
-//  Journey grid 
-function JourneyGrid({ journey, onRemove }) {
-  return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
-      {journey.map(step => {
-        const cueMeta     = { pos:getItemPos(step.cue,     "cue"),     side:"left"  };
-        const contourMeta = { pos:getItemPos(step.contour, "contour"), side:"right" };
-        return [
-          <JCell key={`c-${step.id}`}  item={step.cue}     type="cue"     pos={cueMeta.pos}     side={cueMeta.side}     onRemove={() => onRemove(step.id)} showRemove={true}  />,
-          <JCell key={`co-${step.id}`} item={step.contour} type="contour" pos={contourMeta.pos} side={contourMeta.side} onRemove={() => onRemove(step.id)} showRemove={false} />,
-        ];
-      })}
-      <HereNowTab key="herenow" journey={journey} />
-    </div>
-  );
-}
-
-//  App 
+// ─── App ─────────────────────────────────────────────────────────────────────
 export default function DesignActions() {
   const [screen, setScreen]         = useState("home");
   const [openItem, setOpenItem]     = useState(null);
@@ -485,13 +488,13 @@ export default function DesignActions() {
               creative rigour<br/>for complex challenges
             </p>
             <p style={{ fontSize:10, fontWeight:300, color:"#555", letterSpacing:"0.08em", textTransform:"uppercase", marginTop:14 }}>
-              tap to read  select to pair
+              tap to read · select to pair
             </p>
           </div>
           <div style={{ padding:"0 24px" }}>
             <UniformGrid selCue={selCue} selContour={selContour} onSelect={handleSelect} openItem={openItem} onOpen={handleOpen}/>
             <button onClick={randomPair} style={{ width:"100%", marginTop:12, background:"none", border:"1px solid #1e1e1e", borderRadius:4, padding:12, fontSize:12, color:"#444", letterSpacing:"0.08em" }}>
-              random pair 
+              random pair →
             </button>
           </div>
         </div>
@@ -504,7 +507,7 @@ export default function DesignActions() {
             <div>
               <h2 style={{ fontSize:28, fontWeight:300, color:fg, letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>journey</h2>
               <p style={{ fontSize:11, fontWeight:300, color:"#555", letterSpacing:"0.02em" }}>
-                tap cards to read straps  here now to generate
+                tap cards to read · here now to generate
               </p>
             </div>
             <button onClick={randomPair} style={{ fontSize:11, color:"#555", border:"1px solid #1e1e1e", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
@@ -524,7 +527,7 @@ export default function DesignActions() {
 
       {/* NAV */}
       <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#080808", borderTop:"1px solid #141414", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
-        {[["home","cues & contours"],["journey", journey.length > 0 ? `journey  ${journey.length}` : "journey"]].map(([s,label]) => (
+        {[["home","cues & contours"],["journey", journey.length > 0 ? `journey · ${journey.length}` : "journey"]].map(([s,label]) => (
           <button key={s} onClick={() => setScreen(s)} style={{ background:"none", border:"none", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
             <div style={{ width:3, height:3, borderRadius:"50%", background:screen===s?fg:"transparent" }}/>
             <span style={{ fontWeight:screen===s?400:300, fontSize:10, letterSpacing:"0.1em", textTransform:"uppercase", color:screen===s?fg:"#383838" }}>{label}</span>
