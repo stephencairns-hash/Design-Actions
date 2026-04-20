@@ -2,14 +2,14 @@ import { useState } from "react";
 
 const R = "18px";
 const G = "2px";
-const GL = "#1a1a1a";
+const GL = "#f5f3ef";
 
 const GROUPS = [
-  { id: 1, label: "sense",   color: "#6AAEE0", tint: "#deeaf6", text: "#1a1a1a" },
-  { id: 2, label: "analyse", color: "#F2CC3A", tint: "#faf3d0", text: "#1a1a1a" },
-  { id: 3, label: "imagine", color: "#E87BAC", tint: "#fad9e8", text: "#1a1a1a" },
-  { id: 4, label: "make",    color: "#E8844A", tint: "#fae0d0", text: "#1a1a1a" },
-  { id: 5, label: "act",     color: "#6ABEAA", tint: "#d4ede7", text: "#1a1a1a" },
+  { id: 1, label: "sense",   color: "#9aa89a", tint: "#dde0db", text: "#1a1a1a" },
+  { id: 2, label: "analyse", color: "#8a95a8", tint: "#d8dce4", text: "#1a1a1a" },
+  { id: 3, label: "imagine", color: "#b5a48a", tint: "#e5ddd0", text: "#1a1a1a" },
+  { id: 4, label: "make",    color: "#9aaa9e", tint: "#d8e0db", text: "#1a1a1a" },
+  { id: 5, label: "act",     color: "#8a96a8", tint: "#d4d8e0", text: "#1a1a1a" },
 ];
 const getGroup = (id) => GROUPS.find(g => g.id === id);
 
@@ -136,7 +136,7 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
             height:44, border:"none",
             cursor: activeType === "cue" ? "default" : "pointer",
             display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-            borderBottom: activeType === "cue" ? "2px solid transparent" : "2px solid #1a1a1a",
+            borderBottom: activeType === "cue" ? "2px solid transparent" : "2px solid #fff",
           }}>
             <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{cue.word}</span>
             {cueSelected && <span style={{ opacity:0.35 }}><MiniTick color="#1a1a1a"/></span>}
@@ -149,7 +149,7 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
               height:44, border:"none",
               cursor: activeType === "contour" ? "default" : "pointer",
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-              borderBottom: activeType === "contour" ? "2px solid transparent" : "2px solid #1a1a1a",
+              borderBottom: activeType === "contour" ? "2px solid transparent" : "2px solid #fff",
             }}>
               <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{contour.word}</span>
               {contourSelected && <span style={{ opacity:0.35 }}><MiniTick color="#1a1a1a"/></span>}
@@ -157,47 +157,52 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
           )}
         </div>
 
-        {/* Content area -- same tint, one continuous surface */}
-        <div style={{ background:g.tint, borderRadius:contentRadius }}>
-          <div style={{ padding:"16px 18px 12px" }}>
-            <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#888", marginBottom:3 }}>{activeType}</p>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+       
+        {/* TOP ZONE — tint: label + word + strap */}
+        <div style={{ background:g.tint, padding:"16px 18px 14px" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+            <div>
+              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#888", marginBottom:3 }}>{activeType}</p>
               <div style={{ fontSize:24, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.02em", lineHeight:1 }}>{activeItem.word}</div>
-              <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#999", fontSize:20, cursor:"pointer", padding:0, marginTop:2 }}>×</button>
             </div>
-            <p style={{ fontSize:12, fontStyle:"italic", color:"#555", lineHeight:1.45, marginTop:8 }}>{activeItem.strap}</p>
+            <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#999", fontSize:20, cursor:"pointer", padding:0, marginTop:2 }}>×</button>
           </div>
-          <div style={{ overflowY:"auto", padding:"0 18px 32px", maxHeight:"65vh", WebkitOverflowScrolling:"touch" }}>
-            {activeItem.desc.split("\n\n").map((para, i) => (
-              <p key={i} style={{ fontSize:13, fontWeight:300, color:"#333", lineHeight:1.75, marginBottom: i < activeItem.desc.split("\n\n").length - 1 ? 12 : 0 }}>{para}</p>
-            ))}
-          </div>
-          <div style={{ padding:"0 18px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-            <div style={{ fontSize:10, color:"#888", display:"flex", alignItems:"center", gap:6 }}>
-              {sel && otherSelected ? (
-                <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-                  <MiniTick color="#1a1a1a"/><span>{activeItem.word}</span>
-                  <span style={{ opacity:0.4 }}>--</span>
-                  <MiniTick color="#1a1a1a"/><span>{otherSelected.word}</span>
-                </span>
-              ) : sel ? (
-                <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-                  <MiniTick color="#1a1a1a"/><span>select a {otherLabel}</span>
-                </span>
-              ) : (
-                <span>select as {activeType}</span>
-              )}
-            </div>
-            <SelectCircle selected={sel} onSelect={() => onSelect(activeType, activeItem)}/>
-          </div>
-          {sel && otherSelected && (
-            <div style={{ padding:"0 18px 18px" }}>
-              <button onClick={() => onSelect("save", null)} style={{ width:"100%", background:"#1a1a1a15", color:"#1a1a1a", border:"1px solid #1a1a1a25", borderRadius:4, padding:10, fontSize:11, letterSpacing:"0.06em", cursor:"pointer" }}>
-                save to journey 
-              </button>
-            </div>
-          )}
+          <p style={{ fontSize:12, fontStyle:"italic", color:"#555", lineHeight:1.45, marginTop:10 }}>{activeItem.strap}</p>
         </div>
+
+        {/* MIDDLE ZONE — white: scrollable description */}
+        <div style={{ background:"#fff", overflowY:"auto", padding:"18px 18px 24px", maxHeight:"52vh", WebkitOverflowScrolling:"touch" }}>
+          {activeItem.desc.split("\n\n").map((para, i) => (
+            <p key={i} style={{ fontSize:13, fontWeight:300, color:"#333", lineHeight:1.75, marginBottom: i < activeItem.desc.split("\n\n").length - 1 ? 12 : 0 }}>{para}</p>
+          ))}
+        </div>
+
+        {/* BOTTOM ZONE — tint: select + save */}
+        <div style={{ background:g.tint, borderRadius:contentRadius, padding:"14px 18px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          <div style={{ fontSize:10, color:"#888", display:"flex", alignItems:"center", gap:6 }}>
+            {sel && otherSelected ? (
+              <span style={{ display:"flex", alignItems:"center", gap:5 }}>
+                <MiniTick color="#1a1a1a"/><span>{activeItem.word}</span>
+                <span style={{ opacity:0.4 }}>—</span>
+                <MiniTick color="#1a1a1a"/><span>{otherSelected.word}</span>
+              </span>
+            ) : sel ? (
+              <span style={{ display:"flex", alignItems:"center", gap:5 }}>
+                <MiniTick color="#1a1a1a"/><span>select a {otherLabel}</span>
+              </span>
+            ) : (
+              <span>select as {activeType}</span>
+            )}
+          </div>
+          <SelectCircle selected={sel} onSelect={() => onSelect(activeType, activeItem)}/>
+        </div>
+        {sel && otherSelected && (
+          <div style={{ background:g.tint, borderRadius:contentRadius, padding:"0 18px 18px" }}>
+            <button onClick={() => onSelect("save", null)} style={{ width:"100%", background:"#1a1a1a", color:"#f5f3ef", border:"none", borderRadius:4, padding:10, fontSize:11, letterSpacing:"0.06em", cursor:"pointer" }}>
+              save to journey →
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -208,13 +213,13 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
       <button onClick={() => onOpen(cue)} style={{ background:g.tint, borderRadius:cr(pos,"left"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
         onMouseDown={e=>e.currentTarget.style.opacity=".7"} onMouseUp={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
         <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{cue.word}</span>
-        {cueSelected && <span style={{ position:"absolute", top:7, right:7, opacity:0.4 }}><MiniTick color="#1a1a1a"/></span>}
+        {cueSelected && <span style={{ position:"absolute", top:8, right:7, opacity:0.5 }}><MiniTick color="#1a1a1a"/></span>}
       </button>
       {contour && (
         <button onClick={() => onOpen(contour)} style={{ background:g.tint, borderRadius:cr(pos,"right"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
           onMouseDown={e=>e.currentTarget.style.opacity=".7"} onMouseUp={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
           <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{contour.word}</span>
-          {contourSelected && <span style={{ position:"absolute", top:7, left:7, opacity:0.4 }}><MiniTick color="#1a1a1a"/></span>}
+          {contourSelected && <span style={{ position:"absolute", top:8, left:7, opacity:0.5 }}><MiniTick color="#1a1a1a"/></span>}
         </button>
       )}
     </>
@@ -441,7 +446,7 @@ export default function DesignActions() {
   const [selContour, setSelContour] = useState(null);
   const [journey, setJourney]       = useState([]);
 
-  const bg = "#0a0a0a", fg = "#e8e4de";
+  const bg = "#f5f3ef", fg = "#1a1a1a";
 
   const handleOpen = (item) => setOpenItem(prev => prev?.id === item?.id ? null : item);
 
@@ -481,10 +486,10 @@ export default function DesignActions() {
       {screen === "home" && (
         <div style={{ paddingBottom:84 }}>
           <div style={{ padding:"52px 24px 28px" }}>
-            <h1 style={{ fontSize:36, fontWeight:300, color:fg, letterSpacing:"-0.03em", lineHeight:1.0, marginBottom:10 }}>
+            <h1 style={{ fontSize:36, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.03em", lineHeight:1.0, marginBottom:10 }}>
               Design<br/>Actions
             </h1>
-            <p style={{ fontSize:11, fontWeight:300, color:"#666", letterSpacing:"0.12em", textTransform:"uppercase", lineHeight:1.7 }}>
+            <p style={{ fontSize:11, fontWeight:300, color:"#888", letterSpacing:"0.12em", textTransform:"uppercase", lineHeight:1.7 }}>
               creative rigour<br/>for complex challenges
             </p>
             <p style={{ fontSize:10, fontWeight:300, color:"#555", letterSpacing:"0.08em", textTransform:"uppercase", marginTop:14 }}>
@@ -493,9 +498,6 @@ export default function DesignActions() {
           </div>
           <div style={{ padding:"0 24px" }}>
             <UniformGrid selCue={selCue} selContour={selContour} onSelect={handleSelect} openItem={openItem} onOpen={handleOpen}/>
-            <button onClick={randomPair} style={{ width:"100%", marginTop:12, background:"none", border:"1px solid #1e1e1e", borderRadius:4, padding:12, fontSize:12, color:"#444", letterSpacing:"0.08em" }}>
-              random pair →
-            </button>
           </div>
         </div>
       )}
@@ -505,18 +507,18 @@ export default function DesignActions() {
         <div style={{ paddingBottom:84 }}>
           <div style={{ padding:"52px 24px 20px", display:"flex", alignItems:"flex-start", justifyContent:"space-between" }}>
             <div>
-              <h2 style={{ fontSize:28, fontWeight:300, color:fg, letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>journey</h2>
-              <p style={{ fontSize:11, fontWeight:300, color:"#555", letterSpacing:"0.02em" }}>
+              <h2 style={{ fontSize:28, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>journey</h2>
+              <p style={{ fontSize:11, fontWeight:300, color:"#888", letterSpacing:"0.02em" }}>
                 tap cards to read · here now to generate
               </p>
             </div>
-            <button onClick={randomPair} style={{ fontSize:11, color:"#555", border:"1px solid #1e1e1e", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
+            <button onClick={randomPair} style={{ fontSize:11, color:"#888", border:"1px solid #ccc", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
           </div>
           <div style={{ padding:"0 24px" }}>
             {journey.length === 0 ? (
               <div style={{ padding:"72px 0" }}>
-                <div style={{ fontSize:20, fontWeight:300, color:"#282828", marginBottom:10, letterSpacing:"-0.02em" }}>no pairs yet</div>
-                <div style={{ fontSize:12, fontWeight:300, color:"#333", lineHeight:1.8 }}>select a cue and contour<br/>from the grid to begin</div>
+                <div style={{ fontSize:20, fontWeight:300, color:"#1a1a1a", marginBottom:10, letterSpacing:"-0.02em" }}>no pairs yet</div>
+                <div style={{ fontSize:12, fontWeight:300, color:"#999", lineHeight:1.8 }}>select a cue and contour<br/>from the grid to begin</div>
               </div>
             ) : (
               <JourneyGrid journey={journey} onRemove={(id) => setJourney(j => j.filter(x => x.id !== id))}/>
@@ -526,11 +528,11 @@ export default function DesignActions() {
       )}
 
       {/* NAV */}
-      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#080808", borderTop:"1px solid #141414", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
+      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#f5f3ef", borderTop:"1px solid #d8d4ce", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
         {[["home","cues & contours"],["journey", journey.length > 0 ? `journey · ${journey.length}` : "journey"]].map(([s,label]) => (
           <button key={s} onClick={() => setScreen(s)} style={{ background:"none", border:"none", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
-            <div style={{ width:3, height:3, borderRadius:"50%", background:screen===s?fg:"transparent" }}/>
-            <span style={{ fontWeight:screen===s?400:300, fontSize:10, letterSpacing:"0.1em", textTransform:"uppercase", color:screen===s?fg:"#383838" }}>{label}</span>
+            <div style={{ width:3, height:3, borderRadius:"50%", background:screen===s?"#1a1a1a":"transparent" }}/>
+            <span style={{ fontWeight:screen===s?400:300, fontSize:10, letterSpacing:"0.1em", textTransform:"uppercase", color:screen===s?"#1a1a1a":"#aaa" }}>{label}</span>
           </button>
         ))}
       </div>
