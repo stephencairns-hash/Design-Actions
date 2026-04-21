@@ -3,13 +3,14 @@ import { useState } from "react";
 const R = "18px";
 const G = "2px";
 const GL = "#ffffff";
+const ACTION = "#E83A7A"; // sixth colour — selection, dots, toggle
 
 const GROUPS = [
-  { id: 1, label: "sense",   color: "#9aa89a", tint: "#dde0db", text: "#1a1a1a" },
-  { id: 2, label: "analyse", color: "#8a95a8", tint: "#d8dce4", text: "#1a1a1a" },
-  { id: 3, label: "imagine", color: "#b5a48a", tint: "#e5ddd0", text: "#1a1a1a" },
-  { id: 4, label: "make",    color: "#9aaa9e", tint: "#d8e0db", text: "#1a1a1a" },
-  { id: 5, label: "act",     color: "#8a96a8", tint: "#d4d8e0", text: "#1a1a1a" },
+  { id: 1, label: "sense",   color: "#BEBEAA", tint: "#BEBEAA", text: "#1a1a1a" },
+  { id: 2, label: "analyse", color: "#5AA8F2", tint: "#5AA8F2", text: "#1a1a1a" },
+  { id: 3, label: "imagine", color: "#E9552B", tint: "#E9552B", text: "#1a1a1a" },
+  { id: 4, label: "make",    color: "#D9FD85", tint: "#D9FD85", text: "#1a1a1a" },
+  { id: 5, label: "act",     color: "#848095", tint: "#848095", text: "#1a1a1a" },
 ];
 const getGroup = (id) => GROUPS.find(g => g.id === id);
 
@@ -124,85 +125,71 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
     const tabLeftRadius  = pos === "top" ? `${R} 0 0 0` : "0";
     const tabRightRadius = pos === "top" ? `0 ${R} 0 0` : "0";
     const contentRadius  = pos === "bot" ? `0 0 ${R} ${R}` : "0";
+    const cueSelected_tab     = selCue?.id === cue.id;
+    const contourSelected_tab = selContour?.id === contour?.id;
+    const bothSelected = !!(selCue && selContour);
 
     return (
       <div style={{ gridColumn:"1/-1", overflow:"hidden", animation:"openCard .25s ease" }}>
-        {/* Tab row -- 2px dark gap between tabs */}
+
+        {/* TAB ROW */}
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
           {/* Cue tab */}
-          <button onClick={() => activeType !== "cue" ? onOpen(cue) : null} style={{
-            background: g.tint,
-            borderRadius: tabLeftRadius,
-            height:44, border:"none",
-            cursor: activeType === "cue" ? "default" : "pointer",
-            display:"flex", alignItems:"center", justifyContent:"center", gap:6,
+          <div style={{
+            background: g.tint, borderRadius: tabLeftRadius,
+            height:50, position:"relative", overflow:"hidden",
+            display:"flex", alignItems:"center", justifyContent:"center",
             borderBottom: activeType === "cue" ? "2px solid transparent" : "2px solid #fff",
+            transition:"background .2s",
           }}>
-            <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{cue.word}</span>
-            {cueSelected && <span style={{ opacity:0.35 }}><MiniTick color="#1a1a1a"/></span>}
-          </button>
+            {activeType !== "cue" && <span onClick={() => onOpen(cue)} style={{ position:"absolute", inset:0, background:"rgba(120,115,108,0.2)", cursor:"pointer" }}/>}
+            <span onClick={() => activeType === "cue" ? onSelect("cue", cue) : onOpen(cue)}
+              style={{ fontSize:15, fontWeight: cueSelected_tab ? 500 : 400, color:"#1a1a1a", letterSpacing:"-0.01em", position:"relative", cursor:"pointer" }}>
+              {cue.word}
+            </span>
+            {cueSelected_tab && <span style={{ position:"absolute", top:9, right:9, width:12, height:12, borderRadius:"50%", background: ACTION, boxShadow:"none", display:"inline-block" }}/>}
+
+          </div>
+
           {/* Contour tab */}
           {contour && (
-            <button onClick={() => activeType !== "contour" ? onOpen(contour) : null} style={{
-              background: g.tint,
-              borderRadius: tabRightRadius,
-              height:44, border:"none",
-              cursor: activeType === "contour" ? "default" : "pointer",
-              display:"flex", alignItems:"center", justifyContent:"center", gap:6,
+            <div style={{
+              background: g.tint, borderRadius: tabRightRadius,
+              height:50, position:"relative", overflow:"hidden",
+              display:"flex", alignItems:"center", justifyContent:"center",
               borderBottom: activeType === "contour" ? "2px solid transparent" : "2px solid #fff",
+              transition:"background .2s",
             }}>
-              <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{contour.word}</span>
-              {contourSelected && <span style={{ opacity:0.35 }}><MiniTick color="#1a1a1a"/></span>}
-            </button>
+              {activeType !== "contour" && <span onClick={() => onOpen(contour)} style={{ position:"absolute", inset:0, background:"rgba(120,115,108,0.2)", cursor:"pointer" }}/>}
+              {contourSelected_tab && <span style={{ position:"absolute", top:9, left:9, width:12, height:12, borderRadius:"50%", background: ACTION, boxShadow:"none", display:"inline-block" }}/>}
+              <span onClick={() => activeType === "contour" ? onSelect("contour", contour) : onOpen(contour)}
+                style={{ fontSize:15, fontWeight: contourSelected_tab ? 500 : 400, color:"#1a1a1a", letterSpacing:"-0.01em", position:"relative", cursor:"pointer" }}>
+                {contour.word}
+              </span>
+
+            </div>
           )}
         </div>
 
-       
-        {/* TOP ZONE — tint: label + word + strap */}
-        <div style={{ background:g.tint, padding:"16px 18px 14px" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
-            <div>
-              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#888", marginBottom:3 }}>{activeType}</p>
-              <div style={{ fontSize:24, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.02em", lineHeight:1 }}>{activeItem.word}</div>
+        {/* COLOUR ZONE — label + strap + pair pill */}
+        <div style={{ background:g.tint, padding:"14px 18px 14px" }}>
+          <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12 }}>
+            <div style={{ flex:1 }}>
+              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#444", marginBottom:6, textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
+              <p style={{ fontSize:13, fontStyle:"italic", color:"#555", lineHeight:1.5, textAlign: activeType === "contour" ? "right" : "left" }}>{activeItem.strap}</p>
             </div>
-            <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#999", fontSize:20, cursor:"pointer", padding:0, marginTop:2 }}>×</button>
+            <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>×</button>
           </div>
-          <p style={{ fontSize:12, fontStyle:"italic", color:"#555", lineHeight:1.45, marginTop:10 }}>{activeItem.strap}</p>
+
+
         </div>
 
-        {/* MIDDLE ZONE — white: scrollable description */}
-        <div style={{ background:"#fff", overflowY:"auto", padding:"18px 18px 24px", maxHeight:"52vh", WebkitOverflowScrolling:"touch" }}>
+        {/* WHITE READING ZONE */}
+        <div style={{ background:"#fff", borderRadius:contentRadius, overflowY:"auto", padding:"18px 18px 24px", maxHeight:"52vh", WebkitOverflowScrolling:"touch" }}>
           {activeItem.desc.split("\n\n").map((para, i) => (
             <p key={i} style={{ fontSize:13, fontWeight:300, color:"#333", lineHeight:1.75, marginBottom: i < activeItem.desc.split("\n\n").length - 1 ? 12 : 0 }}>{para}</p>
           ))}
         </div>
-
-        {/* BOTTOM ZONE — tint: select + save */}
-        <div style={{ background:g.tint, borderRadius:contentRadius, padding:"14px 18px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ fontSize:10, color:"#888", display:"flex", alignItems:"center", gap:6 }}>
-            {sel && otherSelected ? (
-              <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-                <MiniTick color="#1a1a1a"/><span>{activeItem.word}</span>
-                <span style={{ opacity:0.4 }}>—</span>
-                <MiniTick color="#1a1a1a"/><span>{otherSelected.word}</span>
-              </span>
-            ) : sel ? (
-              <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-                <MiniTick color="#1a1a1a"/><span>select a {otherLabel}</span>
-              </span>
-            ) : (
-              <span>select as {activeType}</span>
-            )}
-          </div>
-          <SelectCircle selected={sel} onSelect={() => onSelect(activeType, activeItem)}/>
-        </div>
-        {sel && otherSelected && (
-          <div style={{ background:g.tint, borderRadius:contentRadius, padding:"0 18px 18px" }}>
-            <button onClick={() => onSelect("save", null)} style={{ width:"100%", background:"#1a1a1a", color:"#ffffff", border:"none", borderRadius:4, padding:10, fontSize:11, letterSpacing:"0.06em", cursor:"pointer" }}>
-              save to journey →
-            </button>
-          </div>
-        )}
       </div>
     );
   }
@@ -210,16 +197,18 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   // Closed -- tinted cells, black text
   return (
     <>
-      <button onClick={() => onOpen(cue)} style={{ background:g.tint, borderRadius:cr(pos,"left"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
+      <button onClick={() => onOpen(cue)} style={{ background: g.tint, borderRadius:cr(pos,"left"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
         onMouseDown={e=>e.currentTarget.style.opacity=".7"} onMouseUp={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
         <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{cue.word}</span>
-        {cueSelected && <span style={{ position:"absolute", top:8, right:7, opacity:0.5 }}><MiniTick color="#1a1a1a"/></span>}
+        {cueSelected && <span style={{ position:"absolute", top:9, right:9, width:12, height:12, borderRadius:"50%", background: ACTION, boxShadow:"none", display:"inline-block" }}/>}
+        
       </button>
       {contour && (
-        <button onClick={() => onOpen(contour)} style={{ background:g.tint, borderRadius:cr(pos,"right"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
+        <button onClick={() => onOpen(contour)} style={{ background: g.tint, borderRadius:cr(pos,"right"), height:50, border:"none", cursor:"pointer", position:"relative", display:"flex", alignItems:"center", justifyContent:"center", transition:"opacity .1s" }}
           onMouseDown={e=>e.currentTarget.style.opacity=".7"} onMouseUp={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+          {contourSelected && <span style={{ position:"absolute", top:9, left:9, width:12, height:12, borderRadius:"50%", background: ACTION, boxShadow:"none", display:"inline-block" }}/>}
           <span style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em" }}>{contour.word}</span>
-          {contourSelected && <span style={{ position:"absolute", top:8, left:7, opacity:0.5 }}><MiniTick color="#1a1a1a"/></span>}
+          
         </button>
       )}
     </>
@@ -250,7 +239,7 @@ function JCell({ item, type, pos, side, onRemove, showRemove }) {
 
 
 //  Journey grid
-function JourneyGrid({ journey, onRemove }) {
+function PromptGrid({ journey, onRemove }) {
   return (
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
       {journey.map(step => {
@@ -354,57 +343,45 @@ function HereNowTab({ journey }) {
   };
 
   return (
-    <div style={{ gridColumn:"1/-1" }}>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
+    <div style={{ gridColumn:"1/-1", marginTop:8 }}>
+      <div style={{ display:"flex", gap:24, padding:"0 4px 8px" }}>
         <button onClick={() => handleTabOpen("here")} style={{
-          background:HN_BG, color:HN_TEXT,
-          borderRadius: open ? "0" : `0 0 0 ${R}`,
-          border:`1px solid #333`, height:44, cursor:"pointer",
-          display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:15, fontWeight:400, letterSpacing:"-0.01em",
-          position:"relative", overflow:"hidden",
-          borderBottom: open && activeTab !== "here" ? `2px solid ${HN_TEXT}` : "none",
-        }}>
-          {open && activeTab !== "here" && <span style={{ position:"absolute", inset:0, background:"rgba(80,80,80,0.35)" }}/>}
-          <span style={{ position:"relative" }}>here</span>
-        </button>
+          background:"none", border:"none", cursor:"pointer", padding:0,
+          fontSize:15, fontWeight: open && activeTab === "here" ? 400 : 300,
+          color: open && activeTab === "here" ? "#1a1a1a" : "#aaa",
+          letterSpacing:"-0.01em",
+        }}>here</button>
         <button onClick={() => handleTabOpen("now")} style={{
-          background:HN_BG, color:HN_TEXT,
-          borderRadius: open ? "0" : `0 0 ${R} 0`,
-          border:`1px solid #333`, height:44, cursor:"pointer",
-          display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:15, fontWeight:400, letterSpacing:"-0.01em",
-          position:"relative", overflow:"hidden",
-          borderBottom: open && activeTab !== "now" ? `2px solid ${HN_TEXT}` : "none",
-        }}>
-          {open && activeTab !== "now" && <span style={{ position:"absolute", inset:0, background:"rgba(80,80,80,0.35)" }}/>}
-          <span style={{ position:"relative" }}>now</span>
-        </button>
+          background:"none", border:"none", cursor:"pointer", padding:0,
+          fontSize:15, fontWeight: open && activeTab === "now" ? 400 : 300,
+          color: open && activeTab === "now" ? "#1a1a1a" : "#aaa",
+          letterSpacing:"-0.01em",
+        }}>now</button>
       </div>
       {open && (
-        <div style={{ background:HN_BG, borderRadius:`0 0 ${R} ${R}`, border:`1px solid #333`, borderTop:"none", padding:"16px 18px 20px", maxHeight:"55vh", overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
+        <div style={{ background:"#f9f9f7", borderRadius:R, border:"1px solid #e8e4de", padding:"16px 18px 20px", maxHeight:"55vh", overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
           {activeTab === "here" && (
             <>
-              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:HN_TEXT, opacity:0.35, marginBottom:8 }}>location</p>
+              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#aaa", marginBottom:8 }}>location</p>
               {locLoading
-                ? <p style={{ fontSize:13, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>locating…</p>
-                : <p style={{ fontSize:15, fontWeight:400, color:HN_TEXT, lineHeight:1.45 }}>{placeName || "tap now to generate a brief"}</p>
+                ? <p style={{ fontSize:13, fontWeight:300, color:"#aaa" }}>locating…</p>
+                : <p style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", lineHeight:1.45 }}>{placeName || "tap now to generate a brief"}</p>
               }
             </>
           )}
           {activeTab === "now" && (
             <>
-              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:HN_TEXT, opacity:0.35, marginBottom:8 }}>design brief</p>
+              <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#aaa", marginBottom:8 }}>design brief</p>
               {aiStatus === "thinking" && (
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <div style={{ width:5, height:5, borderRadius:"50%", background:HN_TEXT, opacity:0.3, animation:"pulse 1s infinite" }}/>
-                  <p style={{ fontSize:12, fontWeight:300, color:HN_TEXT, opacity:0.4 }}>thinking…</p>
+                  <p style={{ fontSize:12, fontWeight:300, color:"#aaa" }}>thinking…</p>
                 </div>
               )}
               {(aiStatus === "done" || aiStatus === "error") && (
                 <>
-                  <p style={{ fontSize:13, fontWeight:300, color:HN_TEXT, opacity:0.85, lineHeight:1.8 }}>{aiText}</p>
-                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:`1px solid #333`, borderRadius:4, padding:"6px 12px", fontSize:10, color:HN_TEXT, opacity:0.4, cursor:"pointer", letterSpacing:"0.08em" }}>regenerate →</button>
+                  <p style={{ fontSize:13, fontWeight:300, color:"#333", lineHeight:1.8 }}>{aiText}</p>
+                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:"1px solid #e0ddd8", borderRadius:4, padding:"6px 12px", fontSize:10, color:"#aaa", cursor:"pointer", letterSpacing:"0.08em" }}>regenerate →</button>
                 </>
               )}
             </>
@@ -455,7 +432,7 @@ export default function DesignActions() {
       if (selCue && selContour && journey.length < 6) {
         setJourney(p => [...p, { cue:selCue, contour:selContour, id:Date.now() }]);
         setSelCue(null); setSelContour(null); setOpenItem(null);
-        setScreen("journey");
+        setScreen("prompt");
       }
       return;
     }
@@ -468,7 +445,7 @@ export default function DesignActions() {
     const c  = CUES[Math.floor(Math.random() * CUES.length)];
     const co = CONTOURS[Math.floor(Math.random() * CONTOURS.length)];
     setJourney(p => [...p, { cue:c, contour:co, id:Date.now() }]);
-    setScreen("journey");
+    setScreen("prompt");
   };
 
   return (
@@ -484,7 +461,7 @@ export default function DesignActions() {
 
       {/* HOME */}
       {screen === "home" && (
-        <div style={{ paddingBottom:84 }}>
+        <div style={{ paddingBottom:120 }}>
           <div style={{ padding:"52px 24px 28px" }}>
             <h1 style={{ fontSize:36, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.03em", lineHeight:1.0, marginBottom:10 }}>
               Design<br/>Actions
@@ -503,16 +480,16 @@ export default function DesignActions() {
       )}
 
       {/* JOURNEY */}
-      {screen === "journey" && (
-        <div style={{ paddingBottom:84 }}>
+      {screen === "prompt" && (
+        <div style={{ paddingBottom:120 }}>
           <div style={{ padding:"52px 24px 20px", display:"flex", alignItems:"flex-start", justifyContent:"space-between" }}>
             <div>
-              <h2 style={{ fontSize:28, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>journey</h2>
+              <h2 style={{ fontSize:28, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>prompt</h2>
               <p style={{ fontSize:11, fontWeight:300, color:"#888", letterSpacing:"0.02em" }}>
                 tap cards to read · here now to generate
               </p>
             </div>
-            <button onClick={randomPair} style={{ fontSize:11, color:"#888", border:"1px solid #ccc", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
+            <button onClick={randomPair} style={{ fontSize:11, color:"#888", border:"1px solid #e0ddd8", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
           </div>
           <div style={{ padding:"0 24px" }}>
             {journey.length === 0 ? (
@@ -521,20 +498,58 @@ export default function DesignActions() {
                 <div style={{ fontSize:12, fontWeight:300, color:"#999", lineHeight:1.8 }}>select a cue and contour<br/>from the grid to begin</div>
               </div>
             ) : (
-              <JourneyGrid journey={journey} onRemove={(id) => setJourney(j => j.filter(x => x.id !== id))}/>
+              <PromptGrid journey={journey} onRemove={(id) => setJourney(j => j.filter(x => x.id !== id))}/>
             )}
           </div>
         </div>
       )}
 
-      {/* NAV */}
-      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#ffffff", borderTop:"1px solid #e0ddd8", padding:"10px 28px 28px", display:"flex", justifyContent:"space-around" }}>
-        {[["home","cues & contours"],["journey", journey.length > 0 ? `journey · ${journey.length}` : "journey"]].map(([s,label]) => (
-          <button key={s} onClick={() => setScreen(s)} style={{ background:"none", border:"none", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
-            <div style={{ width:3, height:3, borderRadius:"50%", background:screen===s?"#1a1a1a":"transparent" }}/>
-            <span style={{ fontWeight:screen===s?400:300, fontSize:10, letterSpacing:"0.1em", textTransform:"uppercase", color:screen===s?"#1a1a1a":"#aaa" }}>{label}</span>
+      {/* PAIRING STRIP + NAV */}
+      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100 }}>
+
+
+
+        {/* Nav — selected words + toggle button */}
+        <div style={{ background:"#ffffff", borderTop:"1px solid #e0ddd8", padding:"10px 28px 28px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          {/* Selected words */}
+          <div style={{ display:"flex", alignItems:"center", gap:6, flex:1, minWidth:0 }}>
+            {selCue && (
+              <span style={{ fontSize:13, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selCue.word}</span>
+            )}
+            {selCue && selContour && (
+              <span style={{ color:"#ccc", fontSize:13, flexShrink:0 }}>—</span>
+            )}
+            {selContour && (
+              <span style={{ fontSize:13, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selContour.word}</span>
+            )}
+          </div>
+
+          {/* Toggle button — pair / prompt */}
+          <button
+            onClick={() => {
+              if (screen === "prompt") { setScreen("home"); }
+              else if (selCue && selContour) { handleSelect("save", null); }
+            }}
+            style={{
+              background:"none", border:"1px solid #e0ddd8",
+              borderRadius:20, padding:"6px 4px 6px 12px",
+              fontSize:11, fontWeight:500, letterSpacing:"0.04em",
+              cursor: screen === "prompt" || (selCue && selContour) ? "pointer" : "default",
+              display:"flex", alignItems:"center", gap:0, flexShrink:0,
+            }}>
+            <span style={{ color: screen === "home" ? "#bbb" : ACTION, paddingRight:8 }}>
+              {screen === "prompt" ? "←" : ""} pair
+            </span>
+            <span style={{
+              background: (screen === "home" && selCue && selContour) || screen === "prompt" ? ACTION : "#e8e4de",
+              color: (screen === "home" && selCue && selContour) || screen === "prompt" ? "#fff" : "#bbb",
+              borderRadius:16, padding:"4px 10px",
+              transition:"background .25s, color .25s",
+            }}>
+              prompt {screen === "home" ? "→" : ""}
+            </span>
           </button>
-        ))}
+        </div>
       </div>
     </div>
   );
