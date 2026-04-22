@@ -3,7 +3,7 @@ import { useState } from "react";
 const R = "18px";
 const G = "2px";
 const GL = "#ffffff";
-const ACTION = "#E83A7A"; // sixth colour -- selection, dots, toggle
+const ACTION = "#E83A7A"; // sixth colour — selection, dots, toggle
 
 const GROUPS = [
   { id: 1, label: "sense",   color: "#BEBEAA", tint: "#BEBEAA", text: "#1a1a1a" },
@@ -15,15 +15,15 @@ const GROUPS = [
 const getGroup = (id) => GROUPS.find(g => g.id === id);
 
 const GROUP_IMAGES = {
-  // sense -- close attention, fog, threshold, light on surface
+  // sense — close attention, fog, threshold, light on surface
   1: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
-  // analyse -- aerial city, exposed infrastructure, system visible
+  // analyse — aerial city, exposed infrastructure, system visible
   2: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80",
-  // imagine -- open horizon, vast, unresolved
+  // imagine — open horizon, vast, unresolved
   3: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&q=80",
-  // make -- hands, process, material mid-action
+  // make — hands, process, material mid-action
   4: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80",
-  // act -- gathering, civic space, collective presence
+  // act — gathering, civic space, collective presence
   5: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80",
 };
 
@@ -185,14 +185,14 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
           )}
         </div>
 
-        {/* COLOUR ZONE -- label + strap + pair pill */}
+        {/* COLOUR ZONE — label + strap + pair pill */}
         <div style={{ background:g.tint, padding:"14px 18px 14px" }}>
           <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12 }}>
             <div style={{ flex:1 }}>
               <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#1a1a1a", marginBottom:6, textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
               <p style={{ fontSize:13, fontStyle:"italic", color:"#555", lineHeight:1.5, textAlign: activeType === "contour" ? "right" : "left" }}>{activeItem.strap}</p>
             </div>
-            <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>x</button>
+            <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>×</button>
           </div>
 
 
@@ -242,7 +242,7 @@ function CardRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   );
 }
 
-//  Journey cell -- simple flip showing word then strap
+//  Journey cell — simple flip showing word then strap
 function JCell({ item, type, pos, side, onRemove, showRemove }) {
   const [flipped, setFlipped] = useState(false);
   const g = getGroup(item.group);
@@ -283,7 +283,7 @@ function PromptGrid({ journey, onRemove }) {
 }
 
 
-// --- Here Now tab pair --------------------------------------------------------
+// ─── Here Now tab pair ────────────────────────────────────────────────────────
 const HN_BG   = "#1a1a1a";
 const HN_TEXT = "#e8e4de";
 
@@ -327,11 +327,11 @@ function HereNowTab({ journey }) {
     setAiStatus("thinking");
     setAiText("");
     const place = await getLocation();
-    const pairNames = journey.map(s => `${s.cue.word} -- ${s.contour.word}`).join(", ");
+    const pairNames = journey.map(s => `${s.cue.word} — ${s.contour.word}`).join(", ");
     const pairs = journey.map(s =>
       `${s.cue.word} (cue): ${s.cue.desc.replace(/\n\n/g, " ")}\n${s.contour.word} (contour): ${s.contour.desc.replace(/\n\n/g, " ")}`
     ).join("\n\n");
-    const prompt = `You are a design advisor working with a toolkit called Design Actions. Cues are verbs that orient design action. Contours are nouns that define the terrain of inquiry. Together they frame a design situation.\n\nThe user is currently at: ${place}.\n\nTheir selected design action pairs are: ${pairNames}\n\nHere are the full definitions of each:\n\n${pairs}\n\nUsing these definitions as your conceptual foundation, write a short, evocative, place-specific text of around 150-200 words that interprets these design actions for this specific location right now. Be concrete and grounded in the actual place -- its character, its challenges, its possibilities. Do not write generic design advice. Write as if you are standing there with the user. Use a thoughtful, direct tone. Write as flowing prose with no bullet points or headers.`;
+    const prompt = `You are a design advisor working with a toolkit called Design Actions. Cues are verbs that orient design action. Contours are nouns that define the terrain of inquiry. Together they frame a design situation.\n\nThe user is currently at: ${place}.\n\nTheir selected design action pairs are: ${pairNames}\n\nHere are the full definitions of each:\n\n${pairs}\n\nUsing these definitions as your conceptual foundation, write a short, evocative, place-specific text of around 150-200 words that interprets these design actions for this specific location right now. Be concrete and grounded in the actual place — its character, its challenges, its possibilities. Do not write generic design advice. Write as if you are standing there with the user. Use a thoughtful, direct tone. Write as flowing prose with no bullet points or headers.`;
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -391,7 +391,7 @@ function HereNowTab({ journey }) {
             <>
               <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#aaa", marginBottom:8 }}>location</p>
               {locLoading
-                ? <p style={{ fontSize:13, fontWeight:300, color:"#aaa" }}>locating...</p>
+                ? <p style={{ fontSize:13, fontWeight:300, color:"#aaa" }}>locating…</p>
                 : <p style={{ fontSize:15, fontWeight:400, color:"#1a1a1a", lineHeight:1.45 }}>{placeName || "tap now to generate a brief"}</p>
               }
             </>
@@ -402,13 +402,13 @@ function HereNowTab({ journey }) {
               {aiStatus === "thinking" && (
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <div style={{ width:5, height:5, borderRadius:"50%", background:HN_TEXT, opacity:0.3, animation:"pulse 1s infinite" }}/>
-                  <p style={{ fontSize:12, fontWeight:300, color:"#aaa" }}>thinking...</p>
+                  <p style={{ fontSize:12, fontWeight:300, color:"#aaa" }}>thinking…</p>
                 </div>
               )}
               {(aiStatus === "done" || aiStatus === "error") && (
                 <>
                   <p style={{ fontSize:13, fontWeight:300, color:"#333", lineHeight:1.8 }}>{aiText}</p>
-                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:"1px solid #e0ddd8", borderRadius:4, padding:"6px 12px", fontSize:10, color:"#aaa", cursor:"pointer", letterSpacing:"0.08em" }}>regenerate -></button>
+                  <button onClick={generateBrief} style={{ marginTop:14, background:"none", border:"1px solid #e0ddd8", borderRadius:4, padding:"6px 12px", fontSize:10, color:"#aaa", cursor:"pointer", letterSpacing:"0.08em" }}>regenerate →</button>
                 </>
               )}
             </>
@@ -419,7 +419,7 @@ function HereNowTab({ journey }) {
   );
 }
 
-// --- Uniform home grid ---------------------------------------------------------
+// ─── Uniform home grid ─────────────────────────────────────────────────────────
 function UniformGrid({ selCue, selContour, onSelect, openItem, onOpen }) {
   return (
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:G, background:GL }}>
@@ -442,7 +442,7 @@ function UniformGrid({ selCue, selContour, onSelect, openItem, onOpen }) {
   );
 }
 
-// --- App ---------------------------------------------------------------------
+// ─── App ─────────────────────────────────────────────────────────────────────
 export default function DesignActions() {
   const [screen, setScreen]         = useState("home");
   const [openItem, setOpenItem]     = useState(null);
@@ -497,7 +497,7 @@ export default function DesignActions() {
               creative rigour<br/>for complex challenges
             </p>
             <p style={{ fontSize:10, fontWeight:300, color:"#555", letterSpacing:"0.08em", textTransform:"uppercase", marginTop:14 }}>
-              tap to read . select to pair
+              tap to read · select to pair
             </p>
           </div>
           <div style={{ padding:"0 24px" }}>
@@ -513,7 +513,7 @@ export default function DesignActions() {
             <div>
               <h2 style={{ fontSize:28, fontWeight:300, color:"#1a1a1a", letterSpacing:"-0.025em", lineHeight:1.0, marginBottom:6 }}>prompt</h2>
               <p style={{ fontSize:11, fontWeight:300, color:"#888", letterSpacing:"0.02em" }}>
-                tap cards to read . here now to generate
+                tap cards to read · here now to generate
               </p>
             </div>
             <button onClick={randomPair} style={{ fontSize:11, color:"#888", border:"1px solid #e0ddd8", borderRadius:4, padding:"6px 12px", background:"none", marginTop:4 }}>+ random</button>
@@ -536,7 +536,7 @@ export default function DesignActions() {
 
 
 
-        {/* Nav -- selected words + toggle button */}
+        {/* Nav — selected words + toggle button */}
         <div style={{ background:"#ffffff", borderTop:"1px solid #e0ddd8", padding:"10px 28px 28px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           {/* Selected words */}
           <div style={{ display:"flex", alignItems:"center", gap:6, flex:1, minWidth:0 }}>
@@ -544,14 +544,14 @@ export default function DesignActions() {
               <span style={{ fontSize:13, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selCue.word}</span>
             )}
             {selCue && selContour && (
-              <span style={{ color:"#ccc", fontSize:13, flexShrink:0 }}>--</span>
+              <span style={{ color:"#ccc", fontSize:13, flexShrink:0 }}>—</span>
             )}
             {selContour && (
               <span style={{ fontSize:13, fontWeight:400, color:"#1a1a1a", letterSpacing:"-0.01em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selContour.word}</span>
             )}
           </div>
 
-          {/* Toggle button -- pair / prompt */}
+          {/* Toggle button — pair / prompt */}
           <button
             onClick={() => {
               if (screen === "prompt") { setScreen("home"); }
@@ -565,7 +565,7 @@ export default function DesignActions() {
               display:"flex", alignItems:"center", gap:0, flexShrink:0,
             }}>
             <span style={{ color: screen === "home" ? "#bbb" : ACTION, paddingRight:8 }}>
-              {screen === "prompt" ? "<-" : ""} pair
+              {screen === "prompt" ? "←" : ""} pair
             </span>
             <span style={{
               background: (screen === "home" && selCue && selContour) || screen === "prompt" ? ACTION : "#e8e4de",
@@ -573,7 +573,7 @@ export default function DesignActions() {
               borderRadius:16, padding:"4px 10px",
               transition:"background .25s, color .25s",
             }}>
-              prompt {screen === "home" ? "->" : ""}
+              prompt {screen === "home" ? "→" : ""}
             </span>
           </button>
         </div>
