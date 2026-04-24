@@ -177,7 +177,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
               <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>&#215;</button>
             </div>
           </div>
-          <div style={{ background:g.tint, minHeight:"70vh" }}>
+          <div style={{ background:g.tint }}>
             <div style={{ padding:"18px 18px 24px" }}>
               {activeItem.desc.split("\n\n").map((para, i) => (
                 <p key={i} style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.6, fontFamily:"Georgia, serif",
@@ -375,7 +375,7 @@ function HereNowTab({ journey }) {
 
 
 export default function DesignActions() {
-  const [screen, setScreen]         = useState("pair");
+  const [screen, setScreen]         = useState("home");
   const [openItem, setOpenItem]     = useState(null);
   const [selCue, setSelCue]         = useState(null);
   const [selContour, setSelContour] = useState(null);
@@ -402,12 +402,12 @@ export default function DesignActions() {
   };
 
   return (
-    <div style={{ background:"#fff", minHeight:"100vh", color:fg, maxWidth:390, margin:"0 auto", fontFamily:"Inter, sans-serif", animation:"appEntry .6s ease both" }}>
+    <div style={{ background:"#fff", height:"100dvh", display:"flex", flexDirection:"column", color:fg, maxWidth:390, margin:"0 auto", fontFamily:"Inter, sans-serif", animation:"appEntry .6s ease both" }}>
       <style>{`
         * { box-sizing:border-box; margin:0; padding:0; }
         button { cursor:pointer; font-family:Inter,sans-serif; }
         ::-webkit-scrollbar { display:none; }
-        @keyframes openCard { from{opacity:0;transform:scaleY(0.97)} to{opacity:1;transform:scaleY(1)} }
+        @keyframes openCard { from{opacity:0} to{opacity:1} }
         @keyframes appEntry { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
       `}</style>
@@ -422,7 +422,7 @@ export default function DesignActions() {
 
       {/* PAIR */}
       {screen === "home" && (
-        <div style={{ paddingBottom:90 }}>
+        <div style={{ flex:1, overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
           <div style={{ padding:"0" }}></div>
           <div style={{ padding:"0 12px" }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey}/>
@@ -433,7 +433,7 @@ export default function DesignActions() {
 
       {/* PROMPT */}
       {screen === "prompt" && (
-        <div style={{ paddingBottom:90 }}>
+        <div style={{ flex:1, overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
           <div style={{ padding:"0" }}></div>
           <div style={{ padding:"0 12px" }}>
             {selCue && selContour ? (
@@ -486,7 +486,7 @@ export default function DesignActions() {
       )}
 
       {/* NAV */}
-      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:100, background:"#fff", borderTop:"none", padding:"10px 16px 28px", display:"flex", alignItems:"center", justifyContent:"flex-end" }}>
+      <div style={{ flexShrink:0, background:"#fff", borderTop:"none", padding:"10px 16px 28px", display:"flex", alignItems:"center", justifyContent:"flex-end" }}>
         <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", justifyContent:"flex-end" }}>
           {screen === "prompt" && [
             { label:"+ natural", fn: () => { const idx=NATURAL_PAIRS.findIndex(p=>p.cue.id===selCue?.id); const next=NATURAL_PAIRS[(idx+1)%NATURAL_PAIRS.length]; setSelCue(next.cue); setSelContour(next.contour); }},
