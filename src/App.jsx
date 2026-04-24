@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Copy, Info, X } from "lucide-react";
+
 
 const R = "18px";
 const G = "2px";
@@ -344,7 +344,7 @@ function HereNowTab({ journey }) {
                 <div style={{ display:"flex", justifyContent:"flex-end", marginTop:12 }}>
                   <button onClick={copyText} style={{ background:"none", border:"none", cursor:"pointer", padding:4, color:"#bbb", display:"flex", alignItems:"center" }}
                     title="Copy all">
-                    <Copy size={16} strokeWidth={1.5}/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                   </button>
                 </div>
               </>
@@ -409,7 +409,7 @@ export default function DesignActions() {
       <div data-header style={{ position:"fixed", top:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:200, background:"#fff", padding:"0 16px", height:60, display:"flex", alignItems:"center", justifyContent:"center" }}>
         <h1 style={{ fontSize:22, fontWeight:500, color:fg, letterSpacing:"-0.04em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ position:"absolute", right:16, background:"none", border:"none", cursor:"pointer", color:"#aaa", display:"flex", alignItems:"center", padding:4 }}>
-          <Info size={22} strokeWidth={1.5}/>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         </button>
       </div>
 
@@ -458,7 +458,7 @@ export default function DesignActions() {
       {showInfo && (
         <div style={{ position:"fixed", inset:0, zIndex:300, background:"rgba(255,255,255,0.96)", display:"flex", flexDirection:"column", padding:"60px 28px 40px", maxWidth:390, margin:"0 auto", overflowY:"auto" }}>
           <button onClick={() => setShowInfo(false)} style={{ position:"absolute", top:20, right:20, background:"none", border:"none", cursor:"pointer", color:"#aaa" }}>
-            <X size={20} strokeWidth={1.5}/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
           <h2 style={{ fontSize:22, fontWeight:500, color:"#1a1a1a", letterSpacing:"-0.04em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif", marginBottom:28 }}>Design Actions</h2>
           <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.4, fontFamily:"Georgia, serif", marginBottom:16 }}>
