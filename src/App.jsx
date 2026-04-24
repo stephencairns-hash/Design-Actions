@@ -171,7 +171,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
           <div style={{ background:g.tint, padding:"14px 18px" }}>
             <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12 }}>
               <div style={{ flex:1 }}>
-                <p style={{ fontSize:9, textTransform:"uppercase", letterSpacing:"0.12em", color:"#1a1a1a", opacity:0.5, marginBottom:5, fontFamily:"Inter, sans-serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
+                <p style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.1em", color:"#1a1a1a", opacity:0.5, marginBottom:6, fontFamily:"Inter, sans-serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
                 <p style={{ fontSize:17, fontStyle:"italic", color:"#1a1a1a", opacity:0.7, lineHeight:1.6, fontFamily:"Georgia, serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeItem.strap}</p>
               </div>
               <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>&#215;</button>
@@ -204,7 +204,7 @@ function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, cl
         const contours = CONTOURS.filter(c => c.group === g.id);
         return [
           <div key={g.id + "-label"} style={{ gridColumn:"1/-1", height:18, display:"flex", alignItems:"center" }}>
-            <span style={{ fontSize:9, fontVariant:"small-caps", letterSpacing:"0.12em", color:"#999", fontFamily:"Inter, sans-serif", lineHeight:1 }}>
+            <span style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.1em", color:"#bbb", fontFamily:"Inter, sans-serif", lineHeight:1 }}>
               {cues[0].word} {contours[0].word}
             </span>
           </div>,
@@ -414,7 +414,7 @@ export default function DesignActions() {
 
       {/* Fixed header */}
       <div data-header style={{ background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center" }}>
-        <h1 style={{ fontSize:14, fontWeight:500, color:fg, letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
+        <h1 style={{ fontSize:16, fontWeight:500, color:fg, letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft:"auto", background:"none", border:"none", cursor:"pointer", color:"#aaa", display:"flex", alignItems:"center", padding:4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         </button>
@@ -492,22 +492,22 @@ export default function DesignActions() {
             { label:"+ natural", fn: () => { const idx=NATURAL_PAIRS.findIndex(p=>p.cue.id===selCue?.id); const next=NATURAL_PAIRS[(idx+1)%NATURAL_PAIRS.length]; setSelCue(next.cue); setSelContour(next.contour); }},
             { label:"+ random",  fn: () => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }},
           ].map(t => (
-            <button key={t.label} onClick={t.fn} style={{ fontSize:10, color:"#888", border:"1px solid #e0ddd8", borderRadius:20, padding:"5px 9px", background:"none", cursor:"pointer" }}>{t.label}</button>
+            <button key={t.label} onClick={t.fn} style={{ fontSize:15, color:"#888", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", background:"none", cursor:"pointer" }}>{t.label}</button>
           ))}
           {screen === "home" && (
             <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }}
-              style={{ background:"none", border:"1px solid #e0ddd8", borderRadius:20, padding:"7px 14px", fontSize:11, fontWeight:500, letterSpacing:"0.04em", color:"#aaa", cursor:"pointer" }}>
+              style={{ background:"none", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", color:"#aaa", cursor:"pointer" }}>
               clear
             </button>
           )}
           {screen === "home" ? (
             <button onClick={() => { setScreen("prompt"); if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } }}
-              style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border:"none", borderRadius:20, padding:"7px 18px", fontSize:11, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>
+              style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>
               prompt
             </button>
           ) : (
             <button onClick={() => { setScreen("home"); setSelCue(null); setSelContour(null); setOpenItem(null); }}
-              style={{ background:"#1a1a2e", color:"#fff", border:"none", borderRadius:20, padding:"7px 18px", fontSize:11, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer" }}>
+              style={{ background:"#1a1a2e", color:"#fff", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer" }}>
               &#8592;
             </button>
           )}
