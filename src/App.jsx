@@ -116,8 +116,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
 
   useEffect(() => {
     if (isOpen && rowRef.current) {
-      const top = rowRef.current.getBoundingClientRect().top + window.scrollY - 62;
-      window.scrollTo({ top, behavior:"smooth" });
+      rowRef.current.scrollIntoView({ block:"start", behavior:"smooth" });
     }
   }, [isOpen]);
 
@@ -172,7 +171,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
           <div style={{ background:g.tint, padding:"14px 18px" }}>
             <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12 }}>
               <div style={{ flex:1 }}>
-                <p style={{ fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"#1a1a1a", opacity:0.4, marginBottom:5, fontFamily:"Inter, sans-serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
+                <p style={{ fontSize:9, textTransform:"uppercase", letterSpacing:"0.12em", color:"#1a1a1a", opacity:0.5, marginBottom:5, fontFamily:"Inter, sans-serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeType}</p>
                 <p style={{ fontSize:17, fontStyle:"italic", color:"#1a1a1a", opacity:0.7, lineHeight:1.6, fontFamily:"Georgia, serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeItem.strap}</p>
               </div>
               <button onClick={() => onOpen(null)} style={{ background:"none", border:"none", color:"#444", fontSize:20, cursor:"pointer", padding:0, flexShrink:0 }}>&#215;</button>
@@ -203,17 +202,24 @@ function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, cl
       {GROUPS.map(g => {
         const cues     = CUES.filter(c => c.group === g.id);
         const contours = CONTOURS.filter(c => c.group === g.id);
-        return cues.map((cue, i) => {
-          const contour = contours[i];
-          const pos     = rowPos(i);
-          const rowOpen = (openItem?.id === cue.id || openItem?.id === contour?.id) ? openItem : null;
-          return (
-            <GridRow key={g.id + "-" + i} cue={cue} contour={contour} pos={pos} group={g}
-              selCue={selCue} selContour={selContour} onSelect={onSelect}
-              openItem={rowOpen} onOpen={onOpen} readOnly={readOnly} clearKey={clearKey}
-            />
-          );
-        });
+        return [
+          <div key={g.id + "-label"} style={{ gridColumn:"1/-1", height:18, display:"flex", alignItems:"center" }}>
+            <span style={{ fontSize:9, fontVariant:"small-caps", letterSpacing:"0.12em", color:"#999", fontFamily:"Inter, sans-serif", lineHeight:1 }}>
+              {cues[0].word} {contours[0].word}
+            </span>
+          </div>,
+          ...cues.map((cue, i) => {
+            const contour = contours[i];
+            const pos     = rowPos(i);
+            const rowOpen = (openItem?.id === cue.id || openItem?.id === contour?.id) ? openItem : null;
+            return (
+              <GridRow key={g.id + "-" + i} cue={cue} contour={contour} pos={pos} group={g}
+                selCue={selCue} selContour={selContour} onSelect={onSelect}
+                openItem={rowOpen} onOpen={onOpen} readOnly={readOnly} clearKey={clearKey}
+              />
+            );
+          })
+        ];
       })}
     </div>
   );
@@ -396,19 +402,20 @@ export default function DesignActions() {
   };
 
   return (
-    <div style={{ background:"#fff", minHeight:"100vh", color:fg, maxWidth:390, margin:"0 auto", fontFamily:"Inter, sans-serif" }}>
+    <div style={{ background:"#fff", minHeight:"100vh", color:fg, maxWidth:390, margin:"0 auto", fontFamily:"Inter, sans-serif", animation:"appEntry .6s ease both" }}>
       <style>{`
         * { box-sizing:border-box; margin:0; padding:0; }
         button { cursor:pointer; font-family:Inter,sans-serif; }
         ::-webkit-scrollbar { display:none; }
         @keyframes openCard { from{opacity:0;transform:scaleY(0.97)} to{opacity:1;transform:scaleY(1)} }
+        @keyframes appEntry { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
       `}</style>
 
       {/* Fixed header */}
-      <div data-header style={{ position:"fixed", top:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:390, zIndex:200, background:"#fff", padding:"0 16px", height:60, display:"flex", alignItems:"center", justifyContent:"center" }}>
-        <h1 style={{ fontSize:22, fontWeight:500, color:fg, letterSpacing:"-0.04em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
-        <button onClick={() => setShowInfo(true)} style={{ position:"absolute", right:16, background:"none", border:"none", cursor:"pointer", color:"#aaa", display:"flex", alignItems:"center", padding:4 }}>
+      <div data-header style={{ background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center" }}>
+        <h1 style={{ fontSize:14, fontWeight:500, color:fg, letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
+        <button onClick={() => setShowInfo(true)} style={{ marginLeft:"auto", background:"none", border:"none", cursor:"pointer", color:"#aaa", display:"flex", alignItems:"center", padding:4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         </button>
       </div>
@@ -416,7 +423,7 @@ export default function DesignActions() {
       {/* PAIR */}
       {screen === "home" && (
         <div style={{ paddingBottom:90 }}>
-          <div style={{ padding:"76px 0 0" }}></div>
+          <div style={{ padding:"0" }}></div>
           <div style={{ padding:"0 12px" }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey}/>
 
@@ -427,7 +434,7 @@ export default function DesignActions() {
       {/* PROMPT */}
       {screen === "prompt" && (
         <div style={{ paddingBottom:90 }}>
-          <div style={{ padding:"76px 0 0" }}></div>
+          <div style={{ padding:"0" }}></div>
           <div style={{ padding:"0 12px" }}>
             {selCue && selContour ? (
               <div>
@@ -460,7 +467,7 @@ export default function DesignActions() {
           <button onClick={() => setShowInfo(false)} style={{ position:"absolute", top:20, right:20, background:"none", border:"none", cursor:"pointer", color:"#aaa" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-          <h2 style={{ fontSize:22, fontWeight:500, color:"#1a1a1a", letterSpacing:"-0.04em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif", marginBottom:28 }}>Design Actions</h2>
+          <h2 style={{ fontSize:14, fontWeight:500, color:"#1a1a1a", letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif", marginBottom:28 }}>Design Actions</h2>
           <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.4, fontFamily:"Georgia, serif", marginBottom:16 }}>
             A toolkit for tackling complex challenges. Fifteen cues—verbs that orient action—paired with fifteen contours—nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.
           </p>
