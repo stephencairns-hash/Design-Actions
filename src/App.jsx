@@ -461,30 +461,20 @@ export default function DesignActions() {
       )}
 
       {/* NAV */}
-      <div style={{ flexShrink: 0, background: "#fff", padding: "10px 16px 28px", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+      <div style={{ flexShrink:0, background:"#fff", padding:"10px 16px 28px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
         {screen === "prompt" && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {[
-              { label: "next",    fn: () => setNatural(1) },
-              { label: "scramble", fn: () => { setSelCue(CUES[Math.floor(Math.random() * CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random() * CONTOURS.length)]); } },
-            ].map(t => (
-              <button key={t.label} onClick={t.fn} style={{ fontSize: 15, color: "#888", border: "1px solid #e0ddd8", borderRadius: 20, padding: "10px 22px", background: "none", cursor: "pointer" }}>{t.label}</button>
-            ))}
-            <button onClick={() => setScreen("home")} style={{ background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 20, padding: "10px 22px", fontSize: 15, fontWeight: 500, letterSpacing: "0.04em", cursor: "pointer" }}>
-              theory
-            </button>
+          <div style={{ display:"flex", alignItems:"center", gap:8, width:"100%", justifyContent:"space-between" }}>
+            <button onClick={() => setScreen("home")} style={{ fontSize:15, color:"#888", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", background:"none", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>theory</button>
+            <div style={{ display:"flex", gap:8 }}>
+              <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize:15, color:"#888", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", background:"none", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>scramble</button>
+              <button onClick={() => setNatural(1)} style={{ background:"#1a1a2e", color:"#fff", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer" }}>next</button>
+            </div>
           </div>
         )}
         {screen === "home" && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k + 1); }}
-              style={{ background: "none", border: "1px solid #e0ddd8", borderRadius: 20, padding: "10px 22px", fontSize: 15, fontWeight: 500, letterSpacing: "0.04em", color: "#aaa", cursor: "pointer" }}>
-              clear
-            </button>
-            <button onClick={() => { setScreen("prompt"); if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } }}
-              style={{ background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 20, padding: "10px 22px", fontSize: 15, fontWeight: 500, letterSpacing: "0.04em", cursor: "pointer" }}>
-              &#8592;
-            </button>
+          <div style={{ display:"flex", alignItems:"center", gap:8, width:"100%", justifyContent:"space-between" }}>
+            <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize:15, color:"#aaa", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", background:"none", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>clear</button>
+            <button onClick={() => setScreen("prompt")} style={{ background:"#1a1a2e", color:"#fff", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer" }}>&#8592;</button>
           </div>
         )}
       </div>
