@@ -312,7 +312,7 @@ function HereNowTab({ journey }) {
         }}>
         {!active && (
           <p style={{ fontSize:17, fontWeight:400, color:"#aaa", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
-            Here and now<span style={{ animation:"blink 1s step-end infinite", marginLeft:2 }}>|</span>
+            Here and now<span style={{ animation:"blink 1s step-end infinite", marginLeft:3, fontSize:22, color:"#3a3530", fontWeight:400 }}>|</span>
           </p>
         )}
         {active && (
@@ -407,8 +407,7 @@ export default function DesignActions() {
             A toolkit for tackling complex challenges. Fifteen cues -- verbs that orient action -- paired with fifteen contours -- nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.
           </p>
           <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.4, fontFamily: "Georgia, serif", marginBottom: 16 }}>
-            Tap any word to open its description. Tap again to select it. Find another word to pair -- both words underline. Then tap prompt to generate a response here and now.
-          </p>
+            Tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>next</span> or <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>scramble</span> to explore pairs. Tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>here and now<span style={{animation:"blink 1s step-end infinite", marginLeft:3, fontSize:15, color:"#3a3530", fontWeight:400}}>|</span></span> to generate a place-specific brief. Go to <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>theory</span> to read the full vocabulary - tap any word to open its description, tap again to select it. When two words are underlined, tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>pair</span> to return.</p>
           <div style={{ marginTop: 32 }}>
             <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>Stephen Cairns</p>
             <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>David Neudecker</p>
