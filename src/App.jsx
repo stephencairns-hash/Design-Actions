@@ -136,14 +136,12 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
     }
   };
 
-  const LINE = "1px solid #ddd8d0";
 
   return (
     <>
       <button ref={rowRef} onClick={handleCueTap} style={{
         background: isOpen && activeType === "cue" ? g.color : "#fff",
         border:"none",
-        borderBottom: pos === "bot" && !isOpen ? LINE : "none",
         cursor:"pointer", height:60, display:"flex", alignItems:"center", justifyContent:"center",
         marginBottom:0, position:"relative", transition:"background .15s",
         
@@ -156,7 +154,6 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
         <button onClick={handleContourTap} style={{
           background: isOpen && activeType === "contour" ? g.color : "#fff",
           border:"none", cursor:"pointer",
-          borderBottom: pos === "bot" && !isOpen ? LINE : "none",
           height:60, display:"flex", alignItems:"center", justifyContent:"center",
           marginBottom:0, position:"relative", transition:"background .15s",
           
@@ -198,13 +195,14 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
 
 function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, clearKey }) {
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, background:"#fff", borderTop:"1px solid #ddd8d0", borderBottom:"1px solid #ddd8d0" }}>
+    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, background:"#fff", borderTop:"1px solid #ddd8d0", borderBottom:"1px solid #ddd8d0", paddingBottom:20 }}>
       {GROUPS.map(g => {
         const cues     = CUES.filter(c => c.group === g.id);
         const contours = CONTOURS.filter(c => c.group === g.id);
         return [
-          <div key={g.id + "-label"} style={{ gridColumn:"1/-1", height:18, display:"flex", alignItems:"center" }}>
-            <span style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.1em", color:"#bbb", fontFamily:"Inter, sans-serif", lineHeight:1 }}>
+          <div key={g.id + "-label"} style={{ gridColumn:"1/-1", position:"relative", height: g.id === 1 ? 20 : 40 }}>
+            {g.id > 1 && <div style={{ position:"absolute", top:"50%", left:0, right:0, borderTop:"1px solid #ddd8d0" }}/>}
+            <span style={{ position:"absolute", top: g.id === 1 ? 5 : "50%", left:0, marginTop: g.id === 1 ? 0 : 5, fontSize:11, textTransform:"uppercase", letterSpacing:"0.1em", color:"#bbb", fontFamily:"Inter, sans-serif", lineHeight:1 }}>
               {cues[0].word} {contours[0].word}
             </span>
           </div>,
@@ -413,7 +411,7 @@ export default function DesignActions() {
       `}</style>
 
       {/* Fixed header */}
-      <div data-header style={{ background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center" }}>
+      <div data-header style={{ background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center", marginBottom:20 }}>
         <h1 style={{ fontSize:16, fontWeight:500, color:fg, letterSpacing:"0.08em", textTransform:"uppercase", fontFamily:"DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft:"auto", background:"none", border:"none", cursor:"pointer", color:"#aaa", display:"flex", alignItems:"center", padding:4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -439,7 +437,7 @@ export default function DesignActions() {
             {selCue && selContour ? (
               <div>
                 {/* Pair display -- same style as read page cells */}
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, background:"#fff", borderTop:"1px solid #ddd8d0", borderBottom:"1px solid #ddd8d0" }}>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, background:"#fff", borderTop:"1px solid #ddd8d0", borderBottom:"1px solid #ddd8d0", paddingBottom:20 }}>
                   <div style={{ background:getGroup(selCue.group).color, height:60, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     <span style={{ fontSize:22, fontWeight:500, color:"#1a1a1a", letterSpacing:"-0.02em", fontFamily:"DM Sans, sans-serif",
                       borderBottom:"2.5px solid #1a1a1a", paddingBottom:1 }}>{selCue.word}</span>
