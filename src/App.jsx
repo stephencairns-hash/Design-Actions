@@ -114,6 +114,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
     else onOpen(contour);
   };
 
+
   return (
     <>
       <button ref={rowRef} onClick={handleCueTap} style={{
@@ -365,6 +366,12 @@ export default function DesignActions() {
     if (type === "contour") setSelContour(prev => prev?.id === item.id ? null : item);
   };
 
+  const handleTouchStart = (e) => { window._touchStartY = e.touches[0].clientY; };
+  const handleTouchEnd = (e) => {
+    const dy = window._touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 40) setNatural(dy > 0 ? 1 : -1);
+  };
+
   const setNatural = (offset) => {
     const idx  = NATURAL_PAIRS.findIndex(p => p.cue.id === selCue?.id);
     const base = idx < 0 ? 0 : idx;
@@ -419,7 +426,7 @@ export default function DesignActions() {
           <div style={{ padding: "0 12px 90px" }}>
             {selCue && selContour ? (
               <div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, background: "#fff", borderTop: "1px solid #ddd8d0", borderBottom: "1px solid #ddd8d0", paddingBottom: 0 }}>
+                <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, background: "#fff", borderTop: "1px solid #ddd8d0", borderBottom: "1px solid #ddd8d0", paddingBottom: 0 }}>
                   <div style={{ background: getGroup(selCue.group).color, height: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue.word}</span>
                   </div>
@@ -464,7 +471,7 @@ export default function DesignActions() {
               <button key={t.label} onClick={t.fn} style={{ fontSize: 15, color: "#888", border: "1px solid #e0ddd8", borderRadius: 20, padding: "10px 22px", background: "none", cursor: "pointer" }}>{t.label}</button>
             ))}
             <button onClick={() => setScreen("home")} style={{ background: "#1a1a2e", color: "#fff", border: "none", borderRadius: 20, padding: "10px 22px", fontSize: 15, fontWeight: 500, letterSpacing: "0.04em", cursor: "pointer" }}>
-              read
+              theory
             </button>
           </div>
         )}
