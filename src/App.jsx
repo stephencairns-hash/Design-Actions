@@ -473,7 +473,7 @@ export default function DesignActions() {
         {screen === "home" && (
           <div style={{ display:"flex", alignItems:"center", gap:8, width:"100%", justifyContent:"space-between" }}>
             <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize:15, color:"#aaa", border:"1px solid #e0ddd8", borderRadius:20, padding:"10px 22px", background:"none", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>clear</button>
-            <button onClick={() => setScreen("prompt")} style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>pair</button>
+            <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border:"none", borderRadius:20, padding:"10px 22px", fontSize:15, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>pair</button>
           </div>
         )}
       </div>
