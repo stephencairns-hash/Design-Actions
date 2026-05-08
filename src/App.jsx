@@ -306,22 +306,16 @@ function HereNowTab({ journey }) {
   const sentence = cueCapital + " " + step.contour.word + (placeName ? " in " + placeName : "") + (dateStr ? ", " + dateStr : "");
 
   return (
-    <div style={{ marginTop:16 }}>
+    <div style={{ marginTop:8 }}>
       <div
-        onClick={handleTap}
         style={{
           padding:"20px 16px",
           minHeight: active ? "auto" : 60,
-          cursor: active ? "default" : "pointer",
         }}>
-        {!active && (
-          <p style={{ fontSize:17, fontWeight:400, color:"#aaa", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
-            Here and now<span style={{ animation:"blink 1s step-end infinite", marginLeft:3, fontSize:22, color:"#3a3530", fontWeight:400 }}>|</span>
-          </p>
-        )}
+        {!active && (<div style={{marginTop:8,display:"flex",alignItems:"center",gap:12}} onClick={handleTap}><p style={{fontSize:17,fontWeight:400,color:"#888",fontFamily:"Georgia, serif",margin:0}}>Here and now</p><button style={{fontSize:16,fontWeight:500,color:"#fff",background:"#1a1a2e",border:"none",borderRadius:20,padding:"0",width:80,height:44,cursor:"pointer",flexShrink:0}}></button></div>)}
         {active && (
-          <div>
-            <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.5, fontFamily:"Georgia, serif", fontStyle:"italic", marginBottom: aiText ? 16 : 0 }}>
+          <div style={{ marginTop:8, display:"flex", alignItems:"center" }}>
+            <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.5, fontFamily:"Georgia, serif", marginBottom: aiText ? 16 : 0 }}>
               {sentence}
             </p>
             {aiStatus === "thinking" && (
@@ -473,7 +467,7 @@ export default function DesignActions() {
           <button onClick={() => { setScreen("home"); if (selCue) setOpenItem(selCue); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em", pointerEvents:"all" }}>theory</button>
           <div style={{ display:"flex", gap:8 }}>
             <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em", pointerEvents:"all" }}>scramble</button>
-            <button onClick={() => setNatural(1)} style={{ background:"rgba(26,26,46,0.75)", backdropFilter:"blur(10px)", color:"#fff", border:"none", borderRadius:20, padding:"11px 24px", fontSize:16, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", pointerEvents:"all" }}>next</button>
+            <button onClick={() => setNatural(1)} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em", pointerEvents:"all" }}>match</button>
           </div>
         </div>
       )}
