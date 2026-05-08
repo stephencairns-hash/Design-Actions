@@ -106,12 +106,12 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   }, [clearKey]);
 
   const handleCueTap = () => {
-    if (isOpen && activeType === "cue") { if (!readOnly) onSelect("cue", cue); }
-    else onOpen(cue);
+    if (isOpen && activeType === "cue") { onOpen(null); if (!readOnly) onSelect("cue", null); }
+    else { onOpen(cue); if (!readOnly) onSelect("cue", cue); }
   };
   const handleContourTap = () => {
-    if (isOpen && activeType === "contour") { if (!readOnly) onSelect("contour", contour); }
-    else onOpen(contour);
+    if (isOpen && activeType === "contour") { onOpen(null); if (!readOnly) onSelect("contour", null); }
+    else { onOpen(contour); if (!readOnly) onSelect("contour", contour); }
   };
 
 
@@ -121,10 +121,12 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
         background: isOpen && activeType === "cue" ? g.color : "#fff",
         border: "none",
         cursor: "pointer", height: 60, display: "flex", alignItems: "center", justifyContent: "center",
-        marginBottom: 0, position: "relative", transition: "background .15s",
+        marginBottom: 0, position: "relative",
+        transition: "background .15s",
       }}>
         <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif",
-          borderBottom: cueSelected ? "2.5px solid #1a1a1a" : "none" }}>{cue.word}</span>
+          borderBottom: cueSelected ? "2.5px solid #1a1a1a" : "none",
+          display: "inline-block" }}>{cue.word}</span>
       </button>
 
       {contour && (
@@ -132,10 +134,12 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
           background: isOpen && activeType === "contour" ? g.color : "#fff",
           border: "none", cursor: "pointer",
           height: 60, display: "flex", alignItems: "center", justifyContent: "center",
-          marginBottom: 0, position: "relative", transition: "background .15s",
+          marginBottom: 0, position: "relative",
+          transition: "background .15s",
         }}>
           <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif",
-            borderBottom: contourSelected ? "2.5px solid #1a1a1a" : "none" }}>{contour.word}</span>
+            borderBottom: contourSelected ? "2.5px solid #1a1a1a" : "none",
+            display: "inline-block" }}>{contour.word}</span>
         </button>
       )}
 
@@ -362,8 +366,8 @@ export default function DesignActions() {
 
   const handleOpen   = (item) => setOpenItem(prev => prev?.id === item?.id ? null : item);
   const handleSelect = (type, item) => {
-    if (type === "cue")     setSelCue(prev => prev?.id === item.id ? null : item);
-    if (type === "contour") setSelContour(prev => prev?.id === item.id ? null : item);
+    if (type === "cue")     setSelCue(item ? (prev => prev?.id === item.id ? null : item) : null);
+    if (type === "contour") setSelContour(item ? (prev => prev?.id === item.id ? null : item) : null);
   };
 
   const handleTouchStart = (e) => { window._touchStartY = e.touches[0].clientY; };
