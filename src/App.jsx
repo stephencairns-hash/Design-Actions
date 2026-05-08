@@ -389,7 +389,7 @@ export default function DesignActions() {
       <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"}</style>
 
       {/* HEADER */}
-      <div data-header style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", marginBottom: 20, flexShrink: 0 }}>
+      <div data-header style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", flexShrink: 0 }}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#aaa", display: "flex", alignItems: "center", padding: 4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -426,7 +426,7 @@ export default function DesignActions() {
       {/* PROMPT PAGE */}
       {screen === "prompt" && (
         <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
-          <div>
+          <div style={{ width: "100%" }}>
             {selCue && selContour ? (
               <div>
                  <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
@@ -454,8 +454,8 @@ export default function DesignActions() {
 
       {/* READ PAGE */}
       {screen === "home" && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 0 }}>
-          <div>
+        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ paddingBottom: 120 }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
           </div>
         </div>
