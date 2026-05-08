@@ -118,7 +118,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   return (
     <>
       <button ref={rowRef} onClick={handleCueTap} style={{
-        background: isOpen && activeType === "cue" ? g.color : "#fff",
+        background: isOpen && activeType === "cue" ? g.color : isOpen ? g.color + "22" : "#fff",
         border: "none",
         cursor: "pointer", height: 60, display: "flex", alignItems: "center", justifyContent: "center",
         marginBottom: 0, position: "relative",
@@ -131,7 +131,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
 
       {contour && (
         <button onClick={handleContourTap} style={{
-          background: isOpen && activeType === "contour" ? g.color : "#fff",
+          background: isOpen && activeType === "contour" ? g.color : isOpen ? g.color + "22" : "#fff",
           border: "none", cursor: "pointer",
           height: 60, display: "flex", alignItems: "center", justifyContent: "center",
           marginBottom: 0, position: "relative",
@@ -144,7 +144,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
       )}
 
       {isOpen && (
-        <div style={{ gridColumn: "1/-1", animation: "openCard .25s ease" }}>
+        <div style={{ gridColumn: "1/-1", animation: "openCard .25s ease", overflow: "hidden" }}>
           <div style={{ background: g.tint, padding: "14px 18px" }}>
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
               <div style={{ flex: 1 }}>
@@ -179,7 +179,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
 
 function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, clearKey }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, background: "#fff", borderTop: "1px solid #ddd8d0", borderBottom: "1px solid #ddd8d0", paddingBottom: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, background: "#fff", borderTop: "1px solid #ddd8d0", borderBottom: "1px solid #ddd8d0", paddingBottom: 20, marginLeft: 0, marginRight: 0, width: "100%" }}>
       {GROUPS.map(g => {
         const cues     = CUES.filter(c => c.group === g.id);
         const contours = CONTOURS.filter(c => c.group === g.id);
