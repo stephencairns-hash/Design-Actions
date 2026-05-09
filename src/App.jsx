@@ -383,7 +383,7 @@ export default function DesignActions() {
       <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { overflow-x: hidden; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"}</style>
 
       {/* HEADER */}
-      <div data-header style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", flexShrink: 0 }}>
+      <div data-header style={{ position:"fixed", top:0, left:0, right:0, zIndex:200, background:"#fff", padding:"0 16px", paddingTop:"env(safe-area-inset-top, 0px)", height:48, display:"flex", alignItems:"center" }}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#aaa", display: "flex", alignItems: "center", padding: 4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -419,7 +419,7 @@ export default function DesignActions() {
 
       {/* PROMPT PAGE */}
       {screen === "prompt" && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", paddingTop: 48 }}>
           <div style={{ width: "100%" }}>
             {selCue && selContour ? (
               <div>
@@ -448,7 +448,7 @@ export default function DesignActions() {
 
       {/* READ PAGE */}
       {screen === "home" && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", paddingTop: 48 }}>
           <div style={{ paddingBottom: 120 }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
           </div>
@@ -457,7 +457,7 @@ export default function DesignActions() {
 
       {/* NAV */}
       {screen === "home" && (
-        <div style={{ position:"fixed", bottom:36, left:0, right:0, zIndex:200, padding:"0 16px", display:"flex", alignItems:"center", justifyContent:"space-between", pointerEvents:"none" }}>
+        <div style={{ position:"fixed", bottom:"calc(36px + env(safe-area-inset-bottom, 0px))", left:0, right:0, zIndex:200, padding:"0 16px", display:"flex", alignItems:"center", justifyContent:"space-between", pointerEvents:"none" }}>
           <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em", pointerEvents:"all" }}>clear</button>
           <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "rgba(26,26,46,0.75)" : "rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", color: bothSelected ? "#fff" : "#aaa", border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", fontSize:16, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s", pointerEvents:"all" }}>prompt</button>
         </div>
