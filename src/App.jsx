@@ -251,10 +251,23 @@ function HereNowTab({ journey }) {
     setAiStatus("thinking");
     setAiText("");
     const place = await getLocation();
-    const cueDesc = step.cue.desc.split("\n\n").join(" ");
-    const contDesc = step.contour.desc.split("\n\n").join(" ");
-    const pairs = step.cue.word + " (cue): " + cueDesc + "\n" + step.contour.word + " (contour): " + contDesc;
-    const apiPrompt = "You are a design advisor using Design Actions, a toolkit where cues (verbs) orient design action and contours (nouns) define the terrain of inquiry.\n\nThe user is at: " + place + ".\nTheir selected pair: " + step.cue.word + " -- " + step.contour.word + "\n\nFull definitions:\n" + pairs + "\n\nWrite a short, evocative, place-specific text of around 150-200 words that interprets this design action pair for this specific location right now. Be concrete and grounded. Write as flowing prose, no bullet points.";
+    const cueDesc = step.cue.desc.split("
+
+").join(" ");
+    const contDesc = step.contour.desc.split("
+
+").join(" ");
+    const pairs = step.cue.word + " (cue): " + cueDesc + "
+" + step.contour.word + " (contour): " + contDesc;
+    const apiPrompt = "You are a design advisor using Design Actions, a toolkit where cues (verbs) orient design action and contours (nouns) define the terrain of inquiry.
+
+The user is at: " + place + ".
+Their selected pair: " + step.cue.word + " -- " + step.contour.word + "
+
+Full definitions:
+" + pairs + "
+
+Write a short, evocative, place-specific text of around 150-200 words that interprets this design action pair for this specific location right now. Be concrete and grounded. Write as flowing prose, no bullet points.";
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -298,7 +311,8 @@ function HereNowTab({ journey }) {
       sentence,
       "",
       aiText,
-    ].join("\n");
+    ].join("
+");
     navigator.clipboard.writeText(text);
   };
 
@@ -306,42 +320,35 @@ function HereNowTab({ journey }) {
   const sentence = cueCapital + " " + step.contour.word + (placeName ? " in " + placeName : "") + (dateStr ? ", " + dateStr : "");
 
   return (
-    <div style={{ marginTop:8 }}>
-      <div
-        style={{
-          padding:"20px 16px",
-          minHeight: active ? "auto" : 60,
-        }}>
-        {!active && (<div style={{marginTop:16}} onClick={handleTap}><button style={{fontSize:16,fontWeight:500,color:"#fff",background:"#1a1a2e",border:"none",borderRadius:20,padding:"11px 24px",cursor:"pointer",fontFamily:"Inter, sans-serif"}}>here and now</button></div>)}
-        {active && (
-          <div style={{ marginTop:8 }}>
-            <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.5, fontFamily:"Georgia, serif", marginBottom:20 }}>
-              {sentence}
-            </p>
-            {aiStatus === "thinking" && (
-              <p style={{ fontSize:17, color:"#bbb", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
-                <span style={{ animation:"blink 1s step-end infinite" }}>|</span>
-              </p>
-            )}
-            {(aiStatus === "done" || aiStatus === "error") && (
-              <div>
-                <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.6, fontFamily:"Georgia, serif" }}>{aiText}</p>
-                <div style={{ display:"flex", justifyContent:"flex-end", marginTop:12 }}>
-                  <button onClick={copyText} style={{ background:"none", border:"none", cursor:"pointer", padding:4, color:"#bbb", display:"flex", alignItems:"center" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      {aiStatus === "done" && (
-        <div style={{ display:"flex", gap:10, marginTop:12 }}>
-          <button onClick={generate} style={{ background:"none", border:"1px solid #e0ddd8", borderRadius:20, padding:"6px 14px", fontSize:10, color:"#888", cursor:"pointer", fontFamily:"Inter, sans-serif" }}>regenerate</button>
+    <div>
+      {!active && (
+        <div style={{ padding:"8px 16px" }} onClick={handleTap}>
+          <button style={{ fontSize:16, fontWeight:500, color:"#fff", background:"#1a1a2e", border:"none", borderRadius:20, padding:"11px 24px", cursor:"pointer", fontFamily:"Inter, sans-serif" }}>here and now</button>
         </div>
       )}
-      <style>{"@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
+      {active && (
+        <div style={{ padding:"8px 16px" }}>
+          <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.5, fontFamily:"Georgia, serif", marginBottom:20 }}>{sentence}</p>
+          {aiStatus === "thinking" && (
+            <p style={{ fontSize:17, color:"#bbb", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
+              <span style={{ animation:"blink 1s step-end infinite" }}>|</span>
+            </p>
+          )}
+          {(aiStatus === "done" || aiStatus === "error") && (
+            <div>
+              <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.6, fontFamily:"Georgia, serif" }}>{aiText}</p>
+              <div style={{ display:"flex", justifyContent:"flex-end", marginTop:12 }}>
+                <button onClick={copyText} style={{ background:"none", border:"none", cursor:"pointer", padding:4, color:"#bbb" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+          )}
+          {aiStatus === "done" && (
+            <button onClick={generate} style={{ background:"none", border:"1px solid #e0ddd8", borderRadius:20, padding:"6px 14px", fontSize:10, color:"#888", cursor:"pointer", fontFamily:"Inter, sans-serif", marginTop:12 }}>regenerate</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -379,11 +386,11 @@ export default function DesignActions() {
   };
 
   return (
-    <div style={{ background: "#fff", height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" }}>
-      <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { overflow-x: hidden; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"}</style>
+    <div style={{ background: "#fff", height: "100dvh", display: "grid", gridTemplateRows: "auto minmax(0, 1fr) auto", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" }}>
+      <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body, #root { height: 100%; margin: 0; overflow: hidden; } .app-scroll { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
 
       {/* HEADER */}
-      <div data-header style={{ flexShrink:0, background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center", zIndex:200 }}>
+      <div data-header style={{ overflow:"hidden", background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center", zIndex:200 }}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#aaa", display: "flex", alignItems: "center", padding: 4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -418,59 +425,49 @@ export default function DesignActions() {
       )}
 
       {/* PROMPT PAGE */}
-      {screen === "prompt" && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ minHeight:0, overflowY:"auto", WebkitOverflowScrolling:"touch", display: screen==="prompt" ? "block" : "none" }}>
           <div style={{ paddingBottom: 120 }}>
             {selCue && selContour ? (
               <div>
                 <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-
                    <div style={{ background: getGroup(selCue.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue.word}</span></div>
                    <div style={{ background: getGroup(selContour.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour.word}</span></div>
-                 </div>
-                 <div>
-                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 0, padding: "8px 16px" }}>
-                     <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CUE " + selCue.num}</p>
-                     <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CONTOUR " + selContour.num}</p>
-                   </div>
-                   <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />
-                 </div>
+                </div>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 0, padding: "8px 16px" }}>
+                    <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CUE " + selCue.num}</p>
+                    <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CONTOUR " + selContour.num}</p>
+                  </div>
+                  <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />
+                </div>
               </div>
             ) : (
-
               <div style={{ padding: "32px 0", textAlign: "center" }}>
                 <p style={{ fontSize: 12, color: "#ccc", letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "Inter, sans-serif" }}>no pair selected</p>
               </div>
             )}
           </div>
         </div>
-      )}
 
       {/* READ PAGE */}
-      {screen === "home" && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ minHeight:0, overflowY:"auto", WebkitOverflowScrolling:"touch", display: screen==="home" ? "block" : "none" }}>
           <div style={{ paddingBottom: 120 }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
           </div>
         </div>
-      )}
 
       {/* NAV */}
-      {screen === "home" && (
-        <div style={{ flexShrink:0, background:"#fff", padding:"16px 16px 36px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+      <div style={{ overflow:"hidden", background:"#fff", padding:"16px 16px 36px", display: screen==="home" ? "flex" : "none", alignItems:"center", justifyContent:"space-between" }}>
           <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>clear</button>
           <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "rgba(26,26,46,0.75)" : "rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", color: bothSelected ? "#fff" : "#aaa", border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", fontSize:16, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>prompt</button>
         </div>
-      )}
-      {screen === "prompt" && (
-        <div style={{ flexShrink:0, background:"#fff", padding:"16px 16px 36px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+      <div style={{ overflow:"hidden", background:"#fff", padding:"16px 16px 36px", display: screen==="prompt" ? "flex" : "none", alignItems:"center", justifyContent:"space-between" }}>
           <button onClick={() => { setScreen("home"); if (selCue) setOpenItem(selCue); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>theory</button>
           <div style={{ display:"flex", gap:8 }}>
             <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>scramble</button>
             <button onClick={() => setNatural(1)} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>match</button>
           </div>
         </div>
-      )}
     </div>
   );
 }
