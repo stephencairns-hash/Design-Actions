@@ -211,23 +211,25 @@ function HereNowTab({ journey }) {
   const [dateStr, setDateStr] = useState("");
   const [aiText, setAiText] = useState("");
   const [aiStatus, setAiStatus] = useState("idle");
+  const mounted = useRef(true);
   const step = journey[0];
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const getLocation = async () => {
     if (placeName) return placeName;
     let name = "your location";
     try {
-      const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout:6000 }));
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
+      const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 6000 }));
       try {
-        const r = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json");
+        const r = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + pos.coords.latitude + "&lon=" + pos.coords.longitude + "&format=json");
         const d = await r.json();
         const a = d.address || {};
         name = [a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).join(", ");
-      } catch(e) {
-        name = lat.toFixed(3) + ", " + lon.toFixed(3);
-      }
+      } catch(e) { name = pos.coords.latitude.toFixed(3) + ", " + pos.coords.longitude.toFixed(3); }
     } catch(e) {
       try {
         const r = await fetch("https://ipapi.co/json/");
@@ -237,15 +239,17 @@ function HereNowTab({ journey }) {
     }
     const now = new Date();
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    setDateStr(months[now.getMonth()] + " " + now.getFullYear());
-    setPlaceName(name);
+    if (mounted.current) {
+      setDateStr(months[now.getMonth()] + " " + now.getFullYear());
+      setPlaceName(name);
+    }
     return name;
   };
 
   const generate = async () => {
     if (aiStatus === "thinking") return;
-    setAiStatus("thinking");
-    setAiText("");
+    if (mounted.current) setAiStatus("thinking");
+    if (mounted.current) setAiText("");
     const place = await getLocation();
     const cueDesc = step.cue.desc.split("\n\n").join(" ");
     const contDesc = step.contour.desc.split("\n\n").join(" ");
@@ -255,17 +259,15 @@ function HereNowTab({ journey }) {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, messages:[{ role:"user", content:apiPrompt }] }),
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, messages: [{ role: "user", content: apiPrompt }] }),
       });
       if (!response.ok) throw new Error("API error " + response.status);
       const data = await response.json();
       const result = (data.content || []).find(b => b.type === "text");
       if (!result) throw new Error("empty");
-      setAiText(result.text);
-      setAiStatus("done");
+      if (mounted.current) { setAiText(result.text); setAiStatus("done"); }
     } catch(e) {
-      setAiText("Something went wrong. Tap to retry.");
-      setAiStatus("error");
+      if (mounted.current) { setAiText("Something went wrong. Tap to retry."); setAiStatus("error"); }
     }
   };
 
@@ -282,19 +284,7 @@ function HereNowTab({ journey }) {
     if (!navigator.clipboard) return;
     const cueCapital = step.cue.word.charAt(0).toUpperCase() + step.cue.word.slice(1);
     const sentence = cueCapital + " " + step.contour.word + (placeName ? " in " + placeName : "") + (dateStr ? ", " + dateStr : "");
-    const text = [
-      step.cue.word.toUpperCase() + " - cue",
-      step.cue.strap,
-      step.cue.desc,
-      "",
-      step.contour.word.toUpperCase() + " - contour",
-      step.contour.strap,
-      step.contour.desc,
-      "",
-      sentence,
-      "",
-      aiText,
-    ].join("\n");
+    const text = [step.cue.word.toUpperCase() + " - cue", step.cue.strap, step.cue.desc, "", step.contour.word.toUpperCase() + " - contour", step.contour.strap, step.contour.desc, "", sentence, "", aiText].join("\n");
     navigator.clipboard.writeText(text);
   };
 
@@ -304,30 +294,28 @@ function HereNowTab({ journey }) {
   return (
     <div>
       {!active && (
-        <div style={{ padding:"8px 16px" }} onClick={handleTap}>
-          <button style={{ fontSize:16, fontWeight:500, color:"#fff", background:"#1a1a2e", border:"none", borderRadius:20, padding:"11px 24px", cursor:"pointer", fontFamily:"Inter, sans-serif" }}>here and now</button>
+        <div style={{ padding: "8px 16px" }}>
+          <button onClick={handleTap} style={{ fontSize: 16, fontWeight: 500, color: "#fff", background: "#1a1a2e", border: "none", borderRadius: 20, padding: "11px 24px", cursor: "pointer", fontFamily: "Inter, sans-serif" }}>here and now</button>
         </div>
       )}
       {active && (
-        <div style={{ padding:"8px 16px" }}>
-          <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.5, fontFamily:"Georgia, serif", marginBottom:20 }}>{sentence}</p>
+        <div style={{ padding: "8px 16px" }}>
+          <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.5, fontFamily: "Georgia, serif", marginBottom: 20 }}>{sentence}</p>
           {aiStatus === "thinking" && (
-            <p style={{ fontSize:17, color:"#bbb", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
-              <span style={{ animation:"blink 1s step-end infinite" }}>|</span>
+            <p style={{ fontSize: 17, color: "#bbb", fontFamily: "Georgia, serif", fontStyle: "italic" }}>
+              <span style={{ animation: "blink 1s step-end infinite" }}>|</span>
             </p>
           )}
           {(aiStatus === "done" || aiStatus === "error") && (
             <div>
-              <p style={{ fontSize:17, fontWeight:400, color:"#1a1a1a", lineHeight:1.6, fontFamily:"Georgia, serif" }}>{aiText}</p>
-              <div style={{ display:"flex", justifyContent:"flex-end", marginTop:12 }}>
-                <button onClick={copyText} style={{ background:"none", border:"none", cursor:"pointer", padding:4, color:"#bbb" }}>
+              <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.6, fontFamily: "Georgia, serif" }}>{aiText}</p>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+                <button onClick={copyText} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#bbb" }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 </button>
               </div>
+              <button onClick={generate} style={{ background: "none", border: "1px solid #e0ddd8", borderRadius: 20, padding: "6px 14px", fontSize: 10, color: "#888", cursor: "pointer", fontFamily: "Inter, sans-serif", marginTop: 12 }}>regenerate</button>
             </div>
-          )}
-          {aiStatus === "done" && (
-            <button onClick={generate} style={{ background:"none", border:"1px solid #e0ddd8", borderRadius:20, padding:"6px 14px", fontSize:10, color:"#888", cursor:"pointer", fontFamily:"Inter, sans-serif", marginTop:12 }}>regenerate</button>
           )}
         </div>
       )}
@@ -369,6 +357,7 @@ export default function DesignActions() {
 
   return (
     <>
+    <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { height: 100%; height: -webkit-fill-available; overflow: hidden; } .app-shell { height: 100vh; height: -webkit-fill-available; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
     {/* INFO OVERLAY */}
       {showInfo && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 300, background: "rgba(255,255,255,0.96)", display: "flex", flexDirection: "column", padding: "60px 28px 40px", overflowY: "auto" }}>
@@ -384,8 +373,8 @@ export default function DesignActions() {
           </div>
         </div>
       )}
+    <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { height: 100%; height: -webkit-fill-available; overflow: hidden; } .app-shell { height: 100vh; height: -webkit-fill-available; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
     <div style={{ background: "#fff", height: "100vh", display: "grid", gridTemplateRows: "auto minmax(0, 1fr) auto", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" }}>
-      <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { height: 100%; height: -webkit-fill-available; overflow: hidden; } .app-shell { height: 100vh; height: -webkit-fill-available; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
 
       {/* HEADER */}
       <div style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", borderBottom: "1px solid #f0ede8" }}>
@@ -400,21 +389,21 @@ export default function DesignActions() {
       <div style={{ minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
 
         {/* PROMPT PAGE */}
-        {screen === "prompt" && selCue && selContour && (
-          <div style={{ paddingBottom: 120 }}>
+        {screen === "prompt" && (
+          <div style={{ paddingBottom: 120, display: "block" }}>
             <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-              <div style={{ background: getGroup(selCue.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue.word}</span>
+              <div style={{ background: selCue ? getGroup(selCue.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue ? selCue.word : ""}</span>
               </div>
-              <div style={{ background: getGroup(selContour.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour.word}</span>
+              <div style={{ background: selContour ? getGroup(selContour.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour ? selContour.word : ""}</span>
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 16px" }}>
-              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>CUE {selCue.num}</p>
-              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>CONTOUR {selContour.num}</p>
+              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{selCue ? "CUE " + selCue.num : ""}</p>
+              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{selContour ? "CONTOUR " + selContour.num : ""}</p>
             </div>
-            <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />
+            {selCue && selContour && <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />}
           </div>
         )}
 
