@@ -339,6 +339,13 @@ export default function DesignActions() {
     setVh();
     window.addEventListener("resize", setVh);
     window.addEventListener("orientationchange", setVh);
+
+    // Reset body and html margins for full-bleed layout
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.documentElement.style.margin = "0";
+    document.documentElement.style.padding = "0";
+
     return () => {
       window.removeEventListener("resize", setVh);
       window.removeEventListener("orientationchange", setVh);
@@ -398,10 +405,10 @@ export default function DesignActions() {
         <div style={{ display: screen === "prompt" ? "block" : "none", paddingBottom: 120 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
               <div style={{ background: selCue ? getGroup(selCue.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue ? selCue.word : ""}</span>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif" }}>{selCue ? selCue.word : ""}</span>
               </div>
               <div style={{ background: selContour ? getGroup(selContour.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour ? selContour.word : ""}</span>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif" }}>{selContour ? selContour.word : ""}</span>
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 16px" }}>
