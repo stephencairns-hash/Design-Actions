@@ -1,9 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 
-const R = "18px";
-const G = "2px";
-const GL = "#f5f3ef";
-
 const GROUPS = [
   { id: 1, label: "sense",   color: "#BEBEAA", tint: "#BEBEAA" },
   { id: 2, label: "analyse", color: "#5AA8F2", tint: "#5AA8F2" },
@@ -251,23 +247,10 @@ function HereNowTab({ journey }) {
     setAiStatus("thinking");
     setAiText("");
     const place = await getLocation();
-    const cueDesc = step.cue.desc.split("
-
-").join(" ");
-    const contDesc = step.contour.desc.split("
-
-").join(" ");
-    const pairs = step.cue.word + " (cue): " + cueDesc + "
-" + step.contour.word + " (contour): " + contDesc;
-    const apiPrompt = "You are a design advisor using Design Actions, a toolkit where cues (verbs) orient design action and contours (nouns) define the terrain of inquiry.
-
-The user is at: " + place + ".
-Their selected pair: " + step.cue.word + " -- " + step.contour.word + "
-
-Full definitions:
-" + pairs + "
-
-Write a short, evocative, place-specific text of around 150-200 words that interprets this design action pair for this specific location right now. Be concrete and grounded. Write as flowing prose, no bullet points.";
+    const cueDesc = step.cue.desc.split("\n\n").join(" ");
+    const contDesc = step.contour.desc.split("\n\n").join(" ");
+    const pairs = step.cue.word + " (cue): " + cueDesc + "\n" + step.contour.word + " (contour): " + contDesc;
+    const apiPrompt = "You are a design advisor using Design Actions, a toolkit where cues (verbs) orient design action and contours (nouns) define the terrain of inquiry.\n\nThe user is at: " + place + ".\nTheir selected pair: " + step.cue.word + " -- " + step.contour.word + "\n\nFull definitions:\n" + pairs + "\n\nWrite a short, evocative, place-specific text of around 150-200 words that interprets this design action pair for this specific location right now. Be concrete and grounded. Write as flowing prose, no bullet points.";
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -311,8 +294,7 @@ Write a short, evocative, place-specific text of around 150-200 words that inter
       sentence,
       "",
       aiText,
-    ].join("
-");
+    ].join("\n");
     navigator.clipboard.writeText(text);
   };
 
@@ -386,88 +368,85 @@ export default function DesignActions() {
   };
 
   return (
-    <div style={{ background: "#fff", height: "100dvh", display: "grid", gridTemplateRows: "auto minmax(0, 1fr) auto", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" }}>
-      <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body, #root { height: 100%; margin: 0; overflow: hidden; } .app-scroll { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
-
-      {/* HEADER */}
-      <div data-header style={{ overflow:"hidden", background:"#fff", padding:"0 16px", height:48, display:"flex", alignItems:"center", zIndex:200 }}>
-        <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
-        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#aaa", display: "flex", alignItems: "center", padding: 4 }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* INFO OVERLAY */}
+    <>
+    {/* INFO OVERLAY */}
       {showInfo && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(255,255,255,0.96)", display: "flex", flexDirection: "column", padding: "60px 28px 40px", maxWidth: 390, margin: "0 auto", overflowY: "auto" }}>
-          <button onClick={() => setShowInfo(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", cursor: "pointer", color: "#aaa" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 300, background: "rgba(255,255,255,0.96)", display: "flex", flexDirection: "column", padding: "60px 28px 40px", overflowY: "auto" }}>
+          <button onClick={() => setShowInfo(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#aaa" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-          <h2 style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif", marginBottom: 28 }}>Design Actions</h2>
-          <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.4, fontFamily: "Georgia, serif", marginBottom: 16 }}>
-            A toolkit for tackling complex challenges. Fifteen cues -- verbs that orient action -- paired with fifteen contours -- nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.
-          </p>
-          <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.4, fontFamily: "Georgia, serif", marginBottom: 16 }}>
-            Tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>match</span> or <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>scramble</span> to explore pairs. Tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>here and now</span> to generate a place-specific brief. Go to <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>theory</span> to read the full vocabulary - tap any word to open its description, tap again to select it. When two words are underlined, tap <span style={{fontFamily:"DM Sans, sans-serif", fontWeight:500, color:"#1a1a1a", background:"none", border:"1px solid #ccc", padding:"2px 10px", borderRadius:20, fontSize:13, whiteSpace:"nowrap"}}>prompt</span> to return.</p>
+          <p style={{ fontSize: 16, fontWeight: 500, fontFamily: "DM Sans, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 }}>Design Actions</p>
+          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 16 }}>A toolkit for tackling complex challenges. Fifteen cues - verbs that orient action - paired with fifteen contours - nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.</p>
+          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 32 }}>Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap" }}>match</span> or <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap" }}>scramble</span> to explore pairs. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap" }}>here and now</span> to generate a place-specific brief. Go to <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap" }}>theory</span> to read the full vocabulary - tap any word to open its description, tap again to select it. When two words are underlined, tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap" }}>prompt</span> to return.</p>
           <div style={{ marginTop: 32 }}>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>Stephen Cairns</p>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>David Neudecker</p>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>Joshua Vargas</p>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 16 }}>Denise Lee</p>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em", marginBottom: 4 }}>beta</p>
-            <p style={{ fontSize: 11, color: "#aaa", fontFamily: "Inter, sans-serif", letterSpacing: "0.04em" }}>Location via OpenStreetMap</p>
+            <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", letterSpacing: "0.06em" }}>Stephen Cairns · David Neudecker · Joshua Vargas · Denise Lee</p>
+            <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", marginTop: 4 }}>beta · Location via OpenStreetMap</p>
           </div>
         </div>
       )}
+    <div style={{ background: "#fff", height: "100vh", display: "grid", gridTemplateRows: "auto minmax(0, 1fr) auto", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" }}>
+      <style>{"* { box-sizing: border-box; margin: 0; padding: 0; } html, body { height: 100%; height: -webkit-fill-available; overflow: hidden; } .app-shell { height: 100vh; height: -webkit-fill-available; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes openCard { from { opacity: 0; } to { opacity: 1; } } @keyframes appEntry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}</style>
 
-      {/* PROMPT PAGE */}
-      <div style={{ minHeight:0, overflowY:"auto", WebkitOverflowScrolling:"touch", display: screen==="prompt" ? "block" : "none" }}>
+      {/* HEADER */}
+      <div style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", borderBottom: "1px solid #f0ede8" }}>
+        <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
+        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: fg, padding: 4 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+      </div>
+
+
+      {/* SCROLL AREA - only element with overflowY */}
+      <div style={{ minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+
+        {/* PROMPT PAGE */}
+        {screen === "prompt" && selCue && selContour && (
           <div style={{ paddingBottom: 120 }}>
-            {selCue && selContour ? (
-              <div>
-                <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                   <div style={{ background: getGroup(selCue.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue.word}</span></div>
-                   <div style={{ background: getGroup(selContour.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour.word}</span></div>
-                </div>
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 0, padding: "8px 16px" }}>
-                    <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CUE " + selCue.num}</p>
-                    <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{"CONTOUR " + selContour.num}</p>
-                  </div>
-                  <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />
-                </div>
+            <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+              <div style={{ background: getGroup(selCue.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue.word}</span>
               </div>
-            ) : (
-              <div style={{ padding: "32px 0", textAlign: "center" }}>
-                <p style={{ fontSize: 12, color: "#ccc", letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "Inter, sans-serif" }}>no pair selected</p>
+              <div style={{ background: getGroup(selContour.group).color, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selContour.word}</span>
               </div>
-            )}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 16px" }}>
+              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>CUE {selCue.num}</p>
+              <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>CONTOUR {selContour.num}</p>
+            </div>
+            <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />
           </div>
-        </div>
+        )}
 
-      {/* READ PAGE */}
-      <div style={{ minHeight:0, overflowY:"auto", WebkitOverflowScrolling:"touch", display: screen==="home" ? "block" : "none" }}>
+        {/* THEORY PAGE */}
+        {screen === "home" && (
           <div style={{ paddingBottom: 120 }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
           </div>
-        </div>
+        )}
+
+      </div>
 
       {/* NAV */}
-      <div style={{ overflow:"hidden", background:"#fff", padding:"16px 16px 36px", display: screen==="home" ? "flex" : "none", alignItems:"center", justifyContent:"space-between" }}>
-          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>clear</button>
-          <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "rgba(26,26,46,0.75)" : "rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", color: bothSelected ? "#fff" : "#aaa", border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", fontSize:16, fontWeight:500, letterSpacing:"0.04em", cursor:"pointer", transition:"background .25s, color .25s" }}>prompt</button>
-        </div>
-      <div style={{ overflow:"hidden", background:"#fff", padding:"16px 16px 36px", display: screen==="prompt" ? "flex" : "none", alignItems:"center", justifyContent:"space-between" }}>
-          <button onClick={() => { setScreen("home"); if (selCue) setOpenItem(selCue); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>theory</button>
-          <div style={{ display:"flex", gap:8 }}>
-            <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>scramble</button>
-            <button onClick={() => setNatural(1)} style={{ fontSize:16, color:"#1a1a1a", border:"1px solid rgba(0,0,0,0.25)", borderRadius:20, padding:"11px 24px", background:"rgba(255,255,255,0.65)", backdropFilter:"blur(10px)", cursor:"pointer", fontWeight:500, letterSpacing:"0.04em" }}>match</button>
+      <div style={{ background: "#fff", padding: "16px 16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid #f0ede8" }}>
+        {screen === "home" && (
+          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
+        )}
+        {screen === "home" && (
+          <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", borderRadius: 20, padding: "11px 24px", fontSize: 16, fontWeight: 500, letterSpacing: "0.04em", cursor: "pointer", transition: "background .25s, color .25s" }}>prompt</button>
+        )}
+        {screen === "prompt" && (
+          <button onClick={() => { setScreen("home"); if (selCue) setOpenItem(selCue); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>theory</button>
+        )}
+        {screen === "prompt" && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>scramble</button>
+            <button onClick={() => setNatural(1)} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>match</button>
           </div>
-        </div>
+        )}
+      </div>
+
     </div>
+    </>
   );
 }
