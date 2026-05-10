@@ -251,6 +251,13 @@ function HereNowTab({ journey }) {
     if (mounted.current) setAiStatus("thinking");
     if (mounted.current) setAiText("");
     const place = await getLocation();
+    // TEMPORARY: use lorem ipsum instead of API call to test scroll
+    if (mounted.current) {
+      setAiText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.");
+      setAiStatus("done");
+    }
+    return;
+    // ORIGINAL API CALL:
     const cueDesc = step.cue.desc.split("\n\n").join(" ");
     const contDesc = step.contour.desc.split("\n\n").join(" ");
     const pairs = step.cue.word + " (cue): " + cueDesc + "\n" + step.contour.word + " (contour): " + contDesc;
@@ -325,6 +332,19 @@ function HereNowTab({ journey }) {
 
 
 export default function DesignActions() {
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty("--app-h", window.innerHeight + "px");
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    window.addEventListener("orientationchange", setVh);
+    return () => {
+      window.removeEventListener("resize", setVh);
+      window.removeEventListener("orientationchange", setVh);
+    };
+  }, []);
+
   const [screen, setScreen]         = useState("prompt");
   const [openItem, setOpenItem]     = useState(null);
   const [selCue, setSelCue]         = useState(NATURAL_PAIRS[0].cue);
@@ -361,14 +381,12 @@ export default function DesignActions() {
     setSelContour(next.contour);
   };
 
-  const shellStyle = { background: "#fff", height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif", animation: "appEntry .6s ease both" };
+  const shellStyle = { background: "#fff", height: "var(--app-h, 100vh)", display: "flex", flexDirection: "column", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif" };
+  const headerStyle = { background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", flexShrink: 0 };
 
   return (
     <div style={shellStyle}>
-      <style dangerouslySetInnerHTML={{__html: "* { box-sizing: border-box; margin: 0; padding: 0; } html, body { height: 100%; overflow: hidden; } button { cursor: pointer; font-family: Inter, sans-serif; } ::-webkit-scrollbar { display: none; } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }"}} />
-
-      {/* HEADER - grid row 1 */}
-      <div style={{ background: "#fff", padding: "0 16px", height: 48, display: "flex", alignItems: "center", flexShrink: 0 }}>
+      <div style={headerStyle}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
         <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: fg, padding: 4 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -377,9 +395,8 @@ export default function DesignActions() {
 
       {/* SCROLL AREA - grid row 2 */}
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
-        {screen === "prompt" && (
-          <div style={{ paddingBottom: 120 }}>
-            <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+        <div style={{ display: screen === "prompt" ? "block" : "none", paddingBottom: 120 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
               <div style={{ background: selCue ? getGroup(selCue.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif", borderBottom: "2.5px solid #1a1a1a", paddingBottom: 1 }}>{selCue ? selCue.word : ""}</span>
               </div>
@@ -392,11 +409,9 @@ export default function DesignActions() {
               <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{selContour ? "CONTOUR " + selContour.num : ""}</p>
             </div>
             {selCue && selContour && <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />}
-          </div>
         </div>
         <div style={{ display: screen === "home" ? "block" : "none", paddingBottom: 120 }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
-          </div>
         </div>
       </div>
 
