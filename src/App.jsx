@@ -83,6 +83,11 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
   const g = group;
   const cueSelected     = (selCue && selCue.id) === cue.id;
   const contourSelected = (selContour && selContour.id) === (contour && contour.id);
+  // Natural partner hint: when only one side is selected, tint its natural companion
+  const naturalCueForSelContour = selContour && !selCue ? NATURAL_PAIRS.find(p => p.contour.id === selContour.id) : null;
+  const naturalContourForSelCue = selCue && !selContour ? NATURAL_PAIRS.find(p => p.cue.id === selCue.id) : null;
+  const cueIsNaturalCompanion     = naturalCueForSelContour && naturalCueForSelContour.cue.id === cue.id;
+  const contourIsNaturalCompanion = naturalContourForSelCue && naturalContourForSelCue.contour.id === (contour && contour.id);
   const isOpen     = (openItem && openItem.id) === cue.id || (openItem && openItem.id) === (contour && contour.id);
   const activeType = (openItem && openItem.id) === (contour && contour.id) ? "contour" : "cue";
   const activeItem = activeType === "cue" ? cue : contour;
@@ -101,42 +106,69 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
     setContourPrimed(false);
   }, [clearKey]);
 
-  const handleCueTap = () => {
-    if (isOpen && activeType === "cue") { onOpen(null); if (!readOnly) onSelect("cue", null); }
-    else { onOpen(cue); if (!readOnly) onSelect("cue", cue); }
+  const handleCueSelect = () => {
+    if (!readOnly) onSelect("cue", cue);
   };
-  const handleContourTap = () => {
-    if (isOpen && activeType === "contour") { onOpen(null); if (!readOnly) onSelect("contour", null); }
-    else { onOpen(contour); if (!readOnly) onSelect("contour", contour); }
+  const handleContourSelect = () => {
+    if (!readOnly) onSelect("contour", contour);
+  };
+  const handleCueDrawer = () => {
+    if (isOpen && activeType === "cue") {
+      onOpen(null);
+    } else {
+      onOpen(cue);
+    }
+  };
+  const handleContourDrawer = () => {
+    if (isOpen && activeType === "contour") {
+      onOpen(null);
+    } else {
+      onOpen(contour);
+    }
   };
 
 
   return (
     <>
-      <button ref={rowRef} onClick={handleCueTap} style={{
-        background: isOpen && activeType === "cue" ? g.color : isOpen ? g.color + "22" : "#fff",
-        border: "none",
-        cursor: "pointer", height: 60, display: "flex", alignItems: "center", justifyContent: "center",
-        marginBottom: 0, position: "relative",
+      <div ref={rowRef} onClick={handleCueSelect} style={{
+        background: isOpen && activeType === "cue" ? g.color : isOpen ? g.color + "22" : cueSelected ? g.color : cueIsNaturalCompanion ? g.color + "22" : "#fff",
+        cursor: "pointer", height: 80, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, boxSizing: "border-box",
+        position: "relative",
         transition: "background .15s",
       }}>
         <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif",
-          borderBottom: cueSelected ? "2.5px solid #1a1a1a" : "none",
           display: "inline-block" }}>{cue.word}</span>
-      </button>
+        <button onClick={(e) => { e.stopPropagation(); handleCueDrawer(); }} style={{
+          position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+          background: "none", border: "none", padding: 8, cursor: "pointer", color: "#1a1a1a", opacity: 0.35
+        }}>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="12" x2="20" y2="12"/>
+            {!(isOpen && activeType === "cue") && <line x1="12" y1="4" x2="12" y2="20"/>}
+          </svg>
+        </button>
+      </div>
 
       {contour && (
-        <button onClick={handleContourTap} style={{
-          background: isOpen && activeType === "contour" ? g.color : isOpen ? g.color + "22" : "#fff",
-          border: "none", cursor: "pointer",
-          height: 60, display: "flex", alignItems: "center", justifyContent: "center",
-          marginBottom: 0, position: "relative",
+        <div onClick={handleContourSelect} style={{
+          background: isOpen && activeType === "contour" ? g.color : isOpen ? g.color + "22" : contourSelected ? g.color : contourIsNaturalCompanion ? g.color + "22" : "#fff",
+          cursor: "pointer",
+          height: 80, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, boxSizing: "border-box",
+          position: "relative",
           transition: "background .15s",
         }}>
           <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif",
-            borderBottom: contourSelected ? "2.5px solid #1a1a1a" : "none",
             display: "inline-block" }}>{contour.word}</span>
-        </button>
+          <button onClick={(e) => { e.stopPropagation(); handleContourDrawer(); }} style={{
+            position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
+            background: "none", border: "none", padding: 8, cursor: "pointer", color: "#1a1a1a", opacity: 0.35
+          }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="12" x2="20" y2="12"/>
+              {!(isOpen && activeType === "contour") && <line x1="12" y1="4" x2="12" y2="20"/>}
+            </svg>
+          </button>
+        </div>
       )}
 
       {isOpen && (
@@ -151,7 +183,7 @@ function GridRow({ cue, contour, pos, group, selCue, selContour, onSelect, openI
                 <p style={{ fontSize: 17, fontStyle: "italic", color: "#1a1a1a", opacity: 0.7, lineHeight: 1.6,
                   fontFamily: "Georgia, serif", textAlign: activeType === "contour" ? "right" : "left" }}>{activeItem.strap}</p>
               </div>
-              <button onClick={() => onOpen(null)} style={{ background: "none", border: "none", color: "#444", fontSize: 20, cursor: "pointer", padding: 0, flexShrink: 0 }}>&#215;</button>
+              
             </div>
           </div>
           <div style={{ background: g.tint }}>
@@ -180,13 +212,12 @@ function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, cl
         const cues     = CUES.filter(c => c.group === g.id);
         const contours = CONTOURS.filter(c => c.group === g.id);
         return [
-          <div key={g.id + "-label"} style={{ gridColumn: "1/-1", position: "relative", height: g.id === 1 ? 20 : 40 }}>
-            {g.id > 1 && <div style={{ position: "absolute", top: "50%", left: 0, right: 0, borderTop: "1px solid #ddd8d0" }} />}
-            <span style={{ position: "absolute", top: g.id === 1 ? 5 : "50%", left: 16, marginTop: g.id === 1 ? 0 : 5,
-              fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif", lineHeight: 1 }}>
-              {cues[0].word} {contours[0].word}
-            </span>
-          </div>,
+          // Group separator (no heading text)
+          g.id > 1 ? (
+            <div key={g.id + "-sep"} style={{ gridColumn: "1/-1", height: 12, position: "relative" }}>
+              <div style={{ position: "absolute", top: "50%", left: 0, right: 0, borderTop: "1px solid #ddd8d0" }} />
+            </div>
+          ) : <div key={g.id + "-spacer"} style={{ gridColumn: "1/-1", height: 8 }} />,
           ...cues.map((cue, i) => {
             const contour = contours[i];
             const pos     = rowPos(i);
@@ -205,7 +236,7 @@ function FullGrid({ openItem, onOpen, selCue, selContour, onSelect, readOnly, cl
 }
 
 
-function HereNowTab({ journey }) {
+function HereNowTab({ journey, trigger }) {
   const [active, setActive] = useState(false);
   const [placeName, setPlaceName] = useState("");
   const [dateStr, setDateStr] = useState("");
@@ -218,6 +249,10 @@ function HereNowTab({ journey }) {
     mounted.current = true;
     return () => { mounted.current = false; };
   }, []);
+
+  useEffect(() => {
+    if (trigger > 0) generate();
+  }, [trigger]);
 
   const getLocation = async () => {
     if (placeName) return placeName;
@@ -300,36 +335,30 @@ function HereNowTab({ journey }) {
 
   return (
     <div>
-      {!active && (
-        <div style={{ padding: "8px 16px" }}>
-          <button onClick={handleTap} style={{ fontSize: 16, fontWeight: 500, color: "#fff", background: "#1a1a2e", border: "none", borderRadius: 20, padding: "11px 24px", cursor: "pointer", fontFamily: "Inter, sans-serif" }}>here and now</button>
-        </div>
-      )}
-      {active && (
-        <div style={{ padding: "8px 16px" }}>
-          <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.5, fontFamily: "Georgia, serif", marginBottom: 20 }}>{sentence}</p>
-          {aiStatus === "thinking" && (
-            <p style={{ fontSize: 17, color: "#bbb", fontFamily: "Georgia, serif", fontStyle: "italic" }}>
-              <span style={{ animation: "blink 1s step-end infinite" }}>|</span>
-            </p>
-          )}
-          {(aiStatus === "done" || aiStatus === "error") && (
-            <div>
-              <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.6, fontFamily: "Georgia, serif" }}>{aiText}</p>
-              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
-                <button onClick={copyText} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#bbb" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-              </div>
-              <button onClick={generate} style={{ background: "none", border: "1px solid #e0ddd8", borderRadius: 20, padding: "6px 14px", fontSize: 10, color: "#888", cursor: "pointer", fontFamily: "Inter, sans-serif", marginTop: 12 }}>regenerate</button>
+      <div style={{ padding: "8px 16px" }}>
+        {aiStatus === "idle" && (
+          <p style={{ fontSize: 17, color: "#bbb", fontFamily: "Georgia, serif", fontStyle: "italic" }}>Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block", marginLeft: 4, marginRight: 4 }}>here and now</span> to generate a brief.</p>
+        )}
+        {aiStatus === "thinking" && (
+          <p style={{ fontSize: 17, color: "#bbb", fontFamily: "Georgia, serif", fontStyle: "italic" }}>
+            <span style={{ animation: "blink 1s step-end infinite" }}>|</span>
+          </p>
+        )}
+        {(aiStatus === "done" || aiStatus === "error") && (
+          <div>
+            <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.5, fontFamily: "Georgia, serif", marginBottom: 20 }}>{sentence}</p>
+            <p style={{ fontSize: 17, fontWeight: 400, color: "#1a1a1a", lineHeight: 1.6, fontFamily: "Georgia, serif" }}>{aiText}</p>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+              <button onClick={copyText} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#bbb" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
 
 export default function DesignActions() {
   useEffect(() => {
@@ -346,6 +375,15 @@ export default function DesignActions() {
     document.documentElement.style.margin = "0";
     document.documentElement.style.padding = "0";
 
+    // Inject animation keyframes
+    const styleId = "design-actions-keyframes";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = "@keyframes pageEnter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } } @keyframes openCard { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } } @keyframes infoEnter { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } @keyframes fadeInOut { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } ::-webkit-scrollbar { display: none; }";
+      document.head.appendChild(style);
+    }
+
     return () => {
       window.removeEventListener("resize", setVh);
       window.removeEventListener("orientationchange", setVh);
@@ -353,6 +391,10 @@ export default function DesignActions() {
   }, []);
 
   const [screen, setScreen]         = useState("prompt");
+  const [mode, setMode]             = useState("browse"); // "browse" or "read"
+  const [hereTrigger, setHereTrigger] = useState(0);
+  const [frontOpen, setFrontOpen]   = useState(null); // null | "cue" | "contour"
+  const [hasSwipedPairs, setHasSwipedPairs] = useState(false);
   const [openItem, setOpenItem]     = useState(null);
   const [selCue, setSelCue]         = useState(NATURAL_PAIRS[0].cue);
   const [selContour, setSelContour] = useState(NATURAL_PAIRS[0].contour);
@@ -366,18 +408,23 @@ export default function DesignActions() {
   const handleSelect = (type, item) => {
     if (type === "cue") {
       if (!item) { setSelCue(null); return; }
-      setSelCue(prev => (prev && prev.id === item.id) ? null : item);
+      setSelCue(item);
     }
     if (type === "contour") {
       if (!item) { setSelContour(null); return; }
-      setSelContour(prev => (prev && prev.id === item.id) ? null : item);
+      setSelContour(item);
     }
+    // Close any open drawer when selecting a new word
+    setOpenItem(null);
   };
 
   const handleTouchStart = (e) => { window._touchStartY = e.touches[0].clientY; };
   const handleTouchEnd = (e) => {
     const dy = window._touchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) > 40) setNatural(dy > 0 ? 1 : -1);
+    if (Math.abs(dy) > 40) {
+      if (navigator.vibrate) navigator.vibrate(10);
+      setNatural(dy > 0 ? 1 : -1);
+    }
   };
 
   const setNatural = (offset) => {
@@ -386,6 +433,11 @@ export default function DesignActions() {
     const next = NATURAL_PAIRS[(base + offset + NATURAL_PAIRS.length) % NATURAL_PAIRS.length];
     setSelCue(next.cue);
     setSelContour(next.contour);
+    setOpenItem(next.cue);
+    setMode("browse");
+    setHereTrigger(0);
+    setFrontOpen(null);
+    setHasSwipedPairs(true);
   };
 
   const shellStyle = { background: "#fff", height: "var(--app-h, 100vh)", display: "flex", flexDirection: "column", overflow: "hidden", color: fg, fontFamily: "Inter, sans-serif" };
@@ -402,22 +454,59 @@ export default function DesignActions() {
 
       {/* SCROLL AREA - grid row 2 */}
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
-        <div style={{ display: screen === "prompt" ? "block" : "none", paddingBottom: 120 }}>
+        <div onTouchStart={mode==="browse" && screen==="prompt" && !frontOpen ? handleTouchStart : undefined} onTouchEnd={mode==="browse" && screen==="prompt" && !frontOpen ? handleTouchEnd : undefined} style={{ display: screen === "prompt" ? "block" : "none", paddingBottom: 120, minHeight: "100%", animation: screen === "prompt" ? "pageEnter .3s ease both" : "none" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-              <div style={{ background: selCue ? getGroup(selCue.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ background: !selCue ? "#eee" : (frontOpen === "contour" ? getGroup(selCue.group).color + "22" : getGroup(selCue.group).color), height: 80, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", transition: "background .2s ease" }}>
                 <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif" }}>{selCue ? selCue.word : ""}</span>
+                {selCue && (
+                  <button onClick={() => setFrontOpen(frontOpen === "cue" ? null : "cue")} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", padding: 8, cursor: "pointer", color: "#1a1a1a", opacity: 0.35 }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="4" y1="12" x2="20" y2="12"/>
+                      {frontOpen !== "cue" && <line x1="12" y1="4" x2="12" y2="20"/>}
+                    </svg>
+                  </button>
+                )}
               </div>
-              <div style={{ background: selContour ? getGroup(selContour.group).color : "#eee", height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ background: !selContour ? "#eee" : (frontOpen === "cue" ? getGroup(selContour.group).color + "22" : getGroup(selContour.group).color), height: 80, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", transition: "background .2s ease" }}>
                 <span style={{ fontSize: 22, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-0.02em", fontFamily: "DM Sans, sans-serif" }}>{selContour ? selContour.word : ""}</span>
+                {selContour && (
+                  <button onClick={() => setFrontOpen(frontOpen === "contour" ? null : "contour")} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", padding: 8, cursor: "pointer", color: "#1a1a1a", opacity: 0.35 }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="4" y1="12" x2="20" y2="12"/>
+                      {frontOpen !== "contour" && <line x1="12" y1="4" x2="12" y2="20"/>}
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
+            {frontOpen && (
+              <div style={{ background: frontOpen === "cue" ? (selCue ? getGroup(selCue.group).tint : "#eee") : (selContour ? getGroup(selContour.group).tint : "#eee"), padding: "14px 18px", animation: "openCard .25s ease" }}>
+                <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#1a1a1a", opacity: 0.5, marginBottom: 6, fontFamily: "Inter, sans-serif" }}>
+                  {frontOpen === "cue" ? "CUE " + selCue.num : "CONTOUR " + selContour.num}
+                </p>
+                <p style={{ fontSize: 17, fontStyle: "italic", color: "#1a1a1a", opacity: 0.7, lineHeight: 1.6, fontFamily: "Georgia, serif", marginBottom: 12 }}>
+                  {frontOpen === "cue" ? selCue.strap : selContour.strap}
+                </p>
+                <p style={{ fontSize: 15, color: "#1a1a1a", lineHeight: 1.6, fontFamily: "Georgia, serif", whiteSpace: "pre-line" }}>
+                  {frontOpen === "cue" ? selCue.desc : selContour.desc}
+                </p>
+              </div>
+            )}
             <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 16px" }}>
               <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{selCue ? "CUE " + selCue.num : ""}</p>
               <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#bbb", fontFamily: "Inter, sans-serif" }}>{selContour ? "CONTOUR " + selContour.num : ""}</p>
             </div>
-            {selCue && selContour && <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} />}
+            {mode === "browse" && !hasSwipedPairs && !frontOpen && (
+              <div style={{ padding: "32px 16px", textAlign: "center", animation: "fadeInOut 4s ease-in-out infinite" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", margin: "0 auto 8px" }}>
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+                <p style={{ fontSize: 13, color: "#bbb", fontFamily: "Inter, sans-serif", letterSpacing: "0.05em" }}>swipe to explore pairs</p>
+              </div>
+            )}
+            {mode === "read" && selCue && selContour && <HereNowTab key={selCue.id + "-" + selContour.id} journey={[{ cue: selCue, contour: selContour, id: 1 }]} trigger={hereTrigger} />}
         </div>
-        <div style={{ display: screen === "home" ? "block" : "none", paddingBottom: 120 }}>
+        <div style={{ display: screen === "home" ? "block" : "none", paddingBottom: 120, animation: screen === "home" ? "pageEnter .3s ease both" : "none" }}>
             <FullGrid openItem={openItem} onOpen={handleOpen} selCue={selCue} selContour={selContour} onSelect={handleSelect} readOnly={false} clearKey={clearKey} />
         </div>
       </div>
@@ -425,31 +514,32 @@ export default function DesignActions() {
       {/* NAV - grid row 3 */}
       <div style={{ background: "#fff", padding: "16px 16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         {screen === "home" && (
-          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
+          <button onClick={() => { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
         )}
         {screen === "home" && (
-          <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", borderRadius: 20, padding: "11px 24px", fontSize: 16, fontWeight: 500, letterSpacing: "0.04em", cursor: "pointer" }}>prompt</button>
+          <button onClick={() => { if (!selCue || !selContour) { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); } setScreen("prompt"); }} style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", borderRadius: 22, padding: "12px 26px", fontSize: 16, fontWeight: 600, letterSpacing: "0.04em", cursor: "pointer", boxShadow: bothSelected ? "0 2px 8px rgba(26,26,46,0.18)" : "none" }}>prompt</button>
         )}
         {screen === "prompt" && (
-          <button onClick={() => { setScreen("home"); if (selCue) setOpenItem(selCue); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>theory</button>
+          <button onClick={() => { setScreen("home"); setOpenItem(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>theory</button>
         )}
         {screen === "prompt" && (
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); }} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>scramble</button>
-            <button onClick={() => setNatural(1)} style={{ fontSize: 16, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 20, padding: "11px 24px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>match</button>
+            <button onClick={() => { setSelCue(CUES[Math.floor(Math.random()*CUES.length)]); setSelContour(CONTOURS[Math.floor(Math.random()*CONTOURS.length)]); setHereTrigger(0); setMode("browse"); setFrontOpen(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>scramble</button>
+            <button onClick={() => { setMode("read"); setHereTrigger(t => t + 1); }} style={{ fontSize: 16, fontWeight: 600, color: "#fff", background: "#1a1a2e", border: "none", borderRadius: 22, padding: "12px 26px", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "0 2px 8px rgba(26,26,46,0.18)" }}>here and now</button>
           </div>
         )}
       </div>
 
       {/* INFO OVERLAY - position fixed, not a grid child visually */}
       {showInfo && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 300, background: "rgba(255,255,255,0.96)", display: "flex", flexDirection: "column", padding: "60px 28px 40px", overflowY: "auto" }}>
+        <div onClick={(e) => { if (e.target === e.currentTarget) setShowInfo(false); }} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 300, background: "rgba(255,255,255,0.96)", display: "flex", flexDirection: "column", padding: "60px 28px 40px", overflowY: "auto", animation: "infoEnter .25s ease both" }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #BEBEAA 0%, #BEBEAA 20%, #5AA8F2 20%, #5AA8F2 40%, #E9552B 40%, #E9552B 60%, #7DD4C0 60%, #7DD4C0 80%, #848095 80%, #848095 100%)" }} />
           <button onClick={() => setShowInfo(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#aaa" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
           <p style={{ fontSize: 16, fontWeight: 500, fontFamily: "DM Sans, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 }}>Design Actions</p>
           <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 16 }}>A toolkit for tackling complex challenges. Fifteen cues - verbs that orient action - paired with fifteen contours - nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.</p>
-          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 32 }}>Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>match</span> or <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>scramble</span> to explore pairs. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> to generate a place-specific brief. Go to <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>theory</span> to read the full vocabulary - tap any word to open its description and select it. When two words are underlined, tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>prompt</span> to return.</p>
+          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 32 }}>Swipe up or down to cycle through <em>natural pairs</em> - five curated combinations. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>scramble</span> for a random combination from across the full vocabulary. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> to generate a place-specific brief. Go to <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>theory</span> to read the full vocabulary - tap any word to open its description and select it. When two words are underlined, tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>prompt</span> to return.</p>
           <div style={{ marginTop: 32 }}>
             <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", letterSpacing: "0.06em" }}>Stephen Cairns · David Neudecker · Joshua Vargas · Denise Lee</p>
             <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", marginTop: 4 }}>beta · Location via OpenStreetMap</p>
