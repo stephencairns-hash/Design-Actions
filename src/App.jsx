@@ -509,7 +509,7 @@ export default function DesignActions() {
       {/* NAV - grid row 3 */}
       <div style={{ background: "#fff", padding: "16px 20px 32px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexShrink: 0 }}>
         {screen === "home" && (
-          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="clear">
+          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1.5px solid rgba(0,0,0,0.18)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="clear">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -519,13 +519,13 @@ export default function DesignActions() {
           <button
             disabled={!bothSelected}
             onClick={() => { if (bothSelected) { setScreen("prompt"); setMode("read"); setHereTrigger(t => t + 1); } }}
-            style={{ width: 68, height: 68, borderRadius: "50%", background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", cursor: bothSelected ? "pointer" : "not-allowed", boxShadow: bothSelected ? "0 4px 12px rgba(0,0,0,0.12)" : "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.1, fontFamily: "Inter, sans-serif", fontWeight: 500, fontSize: 14, letterSpacing: "0.02em", padding: 0 }} aria-label="here and now">
+            style={{ width: 76, height: 76, borderRadius: "50%", background: bothSelected ? "#1a1a2e" : "#fff", color: bothSelected ? "#fff" : "#bbb", border: bothSelected ? "none" : "1.5px solid rgba(0,0,0,0.18)", cursor: bothSelected ? "pointer" : "not-allowed", boxShadow: bothSelected ? "0 4px 12px rgba(0,0,0,0.12)" : "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.15, fontFamily: "Inter, sans-serif", fontWeight: 500, fontSize: 15, letterSpacing: "0.02em", padding: 0, marginRight: 8 }} aria-label="here and now">
             <span>here</span>
             <span>now</span>
           </button>
         )}
         {screen === "prompt" && (
-          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="back to theory">
+          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1.5px solid rgba(0,0,0,0.18)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="back to theory">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
             </svg>
