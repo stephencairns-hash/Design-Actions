@@ -471,9 +471,7 @@ export default function DesignActions() {
     <div style={shellStyle}>
       <div style={headerStyle}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
-        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: fg, padding: 4 }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        </button>
+        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", width: 34, height: 34, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 400, lineHeight: 1 }} aria-label="information">i</button>
       </div>
 
       {/* SCROLL AREA - grid row 2 */}
@@ -509,18 +507,29 @@ export default function DesignActions() {
       </div>
 
       {/* NAV - grid row 3 */}
-      <div style={{ background: "#fff", padding: "16px 16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <div style={{ background: "#fff", padding: "16px 20px 32px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexShrink: 0 }}>
         {screen === "home" && (
-          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
+          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="clear">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         )}
         {screen === "home" && (
           <button
             disabled={!bothSelected}
             onClick={() => { if (bothSelected) { setScreen("prompt"); setMode("read"); setHereTrigger(t => t + 1); } }}
-            style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", borderRadius: 22, padding: "12px 26px", fontSize: 16, fontWeight: 600, letterSpacing: "0.04em", cursor: bothSelected ? "pointer" : "not-allowed", boxShadow: bothSelected ? "0 2px 8px rgba(26,26,46,0.18)" : "none" }}>here and now</button>
+            style={{ width: 68, height: 68, borderRadius: "50%", background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", cursor: bothSelected ? "pointer" : "not-allowed", boxShadow: bothSelected ? "0 4px 12px rgba(0,0,0,0.12)" : "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", lineHeight: 1.1, fontFamily: "Inter, sans-serif", fontWeight: 500, fontSize: 14, letterSpacing: "0.02em", padding: 0 }} aria-label="here and now">
+            <span>here</span>
+            <span>now</span>
+          </button>
         )}
         {screen === "prompt" && (
-          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ fontSize: 28, color: "#555", border: "none", padding: "6px 14px", background: "none", cursor: "pointer", fontFamily: "Inter, sans-serif", lineHeight: 1 }} aria-label="back to theory">&larr;</button>
+          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="back to theory">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+          </button>
         )}
       </div>
 
