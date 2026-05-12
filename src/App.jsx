@@ -471,7 +471,7 @@ export default function DesignActions() {
     <div style={shellStyle}>
       <div style={headerStyle}>
         <h1 style={{ fontSize: 16, fontWeight: 500, color: fg, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif" }}>Design Actions</h1>
-        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", width: 34, height: 34, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 400, lineHeight: 1 }} aria-label="information">i</button>
+        <button onClick={() => setShowInfo(true)} style={{ marginLeft: "auto", width: 34, height: 34, borderRadius: "50%", border: "1.5px solid rgba(0,0,0,0.18)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 400, lineHeight: 1 }} aria-label="information">i</button>
       </div>
 
       {/* SCROLL AREA - grid row 2 */}
@@ -510,7 +510,7 @@ export default function DesignActions() {
       <div style={{ background: "#fff", padding: "16px 20px 32px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexShrink: 0 }}>
         {screen === "home" && (
           <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="clear">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
@@ -526,7 +526,7 @@ export default function DesignActions() {
         )}
         {screen === "prompt" && (
           <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid rgba(0,0,0,0.12)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", padding: 0, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }} aria-label="back to theory">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
             </svg>
           </button>
