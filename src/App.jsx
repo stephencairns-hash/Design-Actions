@@ -405,14 +405,23 @@ export default function DesignActions() {
     };
   }, []);
 
+
   const [screen, setScreen]         = useState("home");
   const [mode, setMode]             = useState("browse"); // "browse" or "read"
   const [hereTrigger, setHereTrigger] = useState(0);
   const [frontOpen, setFrontOpen]   = useState(null); // null | "cue" | "contour"
   const [hasSwipedPairs, setHasSwipedPairs] = useState(false);
+  const scrollRef = useRef(null);
+
+  // Reset scroll to top when navigating between screens
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [screen]);
   const [openItem, setOpenItem]     = useState(null);
-  const [selCue, setSelCue]         = useState(NATURAL_PAIRS[0].cue);
-  const [selContour, setSelContour] = useState(NATURAL_PAIRS[0].contour);
+  const [selCue, setSelCue]         = useState(null);
+  const [selContour, setSelContour] = useState(null);
   const [clearKey, setClearKey]     = useState(0);
   const [showInfo, setShowInfo]     = useState(false);
 
@@ -468,7 +477,7 @@ export default function DesignActions() {
       </div>
 
       {/* SCROLL AREA - grid row 2 */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
         <div onTouchStart={mode==="browse" && screen==="prompt" && !frontOpen ? handleTouchStart : undefined} onTouchEnd={mode==="browse" && screen==="prompt" && !frontOpen ? handleTouchEnd : undefined} style={{ display: screen === "prompt" ? "block" : "none", paddingBottom: 120, minHeight: "100%", animation: screen === "prompt" ? "pageEnter .22s ease both" : "none" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
               <div style={{ background: !selCue ? "#eee" : (frontOpen === "contour" ? getGroup(selCue.group).color + "22" : getGroup(selCue.group).color), height: 80, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", transition: "background .2s ease" }}>
@@ -529,7 +538,7 @@ export default function DesignActions() {
       {/* NAV - grid row 3 */}
       <div style={{ background: "#fff", padding: "16px 16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         {screen === "home" && (
-          <button onClick={() => { setSelCue(NATURAL_PAIRS[0].cue); setSelContour(NATURAL_PAIRS[0].contour); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
+          <button onClick={() => { setSelCue(null); setSelContour(null); setOpenItem(null); setClearKey(k => k+1); setFrontOpen(null); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>clear</button>
         )}
         {screen === "home" && (
           <button
@@ -538,7 +547,7 @@ export default function DesignActions() {
             style={{ background: bothSelected ? "#1a1a2e" : "#e0ddd8", color: bothSelected ? "#fff" : "#aaa", border: "none", borderRadius: 22, padding: "12px 26px", fontSize: 16, fontWeight: 600, letterSpacing: "0.04em", cursor: bothSelected ? "pointer" : "not-allowed", boxShadow: bothSelected ? "0 2px 8px rgba(26,26,46,0.18)" : "none" }}>here and now</button>
         )}
         {screen === "prompt" && (
-          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ fontSize: 14, color: "#888", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 20, padding: "9px 18px", background: "none", cursor: "pointer", fontWeight: 500, letterSpacing: "0.04em" }}>&larr; theory</button>
+          <button onClick={() => { setScreen("home"); setOpenItem(null); setMode("browse"); }} style={{ fontSize: 22, color: "#888", border: "none", padding: "8px 12px", background: "none", cursor: "pointer", fontFamily: "Inter, sans-serif", lineHeight: 1 }} aria-label="back to theory">&larr;</button>
         )}
         {screen === "prompt" && (
           <button onClick={() => { setMode("read"); setHereTrigger(t => t + 1); }} style={{ fontSize: 16, fontWeight: 600, color: "#fff", background: "#1a1a2e", border: "none", borderRadius: 22, padding: "12px 26px", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "0 2px 8px rgba(26,26,46,0.18)" }}>here and now</button>
@@ -553,8 +562,8 @@ export default function DesignActions() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
           <p style={{ fontSize: 16, fontWeight: 500, fontFamily: "DM Sans, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 }}>Design Actions</p>
-          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 16 }}>A toolkit for tackling complex challenges. Fifteen cues - verbs that orient action - paired with fifteen contours - nouns that define the terrain of inquiry. Select a pair, generate a place-specific brief, take it further in conversation.</p>
-          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 32 }}>Tap any word to select it. Tap the <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 6px", borderRadius: 6, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>+</span> beside a word to read its description. When you have selected one cue and one contour, the <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> button lights up. Tap it to generate a brief that interprets your pair for this specific place and moment. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> to generate a place-specific brief. Go to <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>theory</span> to read the full vocabulary - tap any word to open its description and select it. When two words are underlined, tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>prompt</span> to return.</p>
+          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 16 }}>A toolkit for design as engagement with complex challenges - a proposition for thinking and acting otherwise.</p>
+          <p style={{ fontSize: 15, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#444", marginBottom: 32 }}>A toolkit of fifteen <em>cues</em> - verbs that orient design action - and fifteen <em>contours</em> - nouns that name the terrain of inquiry. Tap any word to select it. Its natural companion will tint to suggest a pairing, but you can choose any combination. Tap the <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 6px", borderRadius: 6, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>+</span> beside any word to read its description. When you have selected one cue and one contour, the <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> button lights up. Tap to generate a brief that interprets your pair for this place, this moment. Tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>here and now</span> to generate a place-specific brief. Go to <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>theory</span> to read the full vocabulary - tap any word to open its description and select it. When two words are underlined, tap <span style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 500, color: "#1a1a1a", border: "1px solid rgba(0,0,0,0.3)", padding: "2px 10px", borderRadius: 20, fontSize: 13, whiteSpace: "nowrap", display: "inline-block" }}>prompt</span> to return.</p>
           <div style={{ marginTop: 32 }}>
             <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", letterSpacing: "0.06em" }}>Stephen Cairns · David Neudecker · Joshua Vargas · Denise Lee</p>
             <p style={{ fontSize: 12, color: "#bbb", fontFamily: "Inter, sans-serif", marginTop: 4 }}>beta · Location via OpenStreetMap</p>
