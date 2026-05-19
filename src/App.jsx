@@ -158,7 +158,7 @@ export default function App() {
   const scrollRef = useRef(null);
   const savedScroll = useRef(null);
 
-  const pendingScroll = useRef(null); // {top, drawerH, cellAboveDrawer}
+  const scrollAdjust = useRef(null); // pixels to ADD to scrollTop after render
 
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
@@ -167,33 +167,41 @@ export default function App() {
 
     if (!isSelected) {
       if (openWord && scroll) {
+        // Only compensate when tapped word is BELOW the open drawer
         const drawer = scroll.querySelector("[data-drawer]");
         const dH = drawer ? drawer.getBoundingClientRect().height : 0;
         const tEl = document.getElementById("cell-" + word);
         const oEl = document.getElementById("cell-" + openWord);
-        const tappedBelow = tEl && oEl &&
-          tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
-        // Store what scrollTop should be after the drawer collapses
-        pendingScroll.current = scroll.scrollTop - (tappedBelow ? dH : 0);
+        if (tEl && oEl) {
+          const tappedBelow = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
+          if (tappedBelow && dH > 0) {
+            // After drawer collapses, content shifts up by dH
+            // We need scrollTop to also decrease by dH to keep tapped word in place
+            scrollAdjust.current = -dH;
+          }
+        }
       }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
     } else if (!isOpen) {
       setOpenWord(word);
     } else {
-      if (scroll) pendingScroll.current = scroll.scrollTop;
+      // Closing drawer (tap 3) — same compensation if needed
+      const scroll2 = scrollRef.current;
+      if (scroll2) {
+        scrollAdjust.current = 0; // no shift when just closing
+      }
       setOpenWord(null);
     }
   }, [selCue, selContour, openWord]);
 
   useLayoutEffect(() => {
-    // Runs synchronously after DOM update, before browser paint
     const scroll = scrollRef.current;
-    if (pendingScroll.current !== null && scroll) {
-      scroll.scrollTop = pendingScroll.current;
-      pendingScroll.current = null;
+    if (scrollAdjust.current !== null && scroll) {
+      scroll.scrollTop += scrollAdjust.current;
+      scrollAdjust.current = null;
     }
-  }); // No deps — runs after every render, which is what we want
+  }); // every render
 
   useEffect(() => {
     const scroll = scrollRef.current;
