@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const COLORS = ["#BEBEAA", "#5AA8F2", "#D94F28", "#7DD4C0", "#848095"];
 const CUES = ["sense", "describe", "recognise", "analyse", "interpret", "evaluate", "spark", "mull", "imagine", "craft", "configure", "cultivate", "empower", "inform", "inspire"];
@@ -144,7 +144,6 @@ export default function App() {
   const [screen, setScreen] = useState("theory");
   const [showInfo, setShowInfo] = useState(false);
   const scrollRef = useRef(null);
-  const scrollFix = useRef(0);
 
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
@@ -152,33 +151,31 @@ export default function App() {
     const scroll = scrollRef.current;
 
     if (!isSelected) {
-      scrollFix.current = 0;
+      // Capture the tapped word's position on screen BEFORE anything changes
+      let anchorTopBefore = null;
       if (openWord && scroll) {
-        const drawer = scroll.querySelector('[data-drawer]');
         const tEl = document.getElementById("cell-" + word);
-        const oEl = document.getElementById("cell-" + openWord);
-        if (drawer && tEl && oEl) {
-          const dH = drawer.getBoundingClientRect().height;
-          const below = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
-          if (below) scrollFix.current = -dH;
-        }
+        if (tEl) anchorTopBefore = tEl.getBoundingClientRect().top;
       }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
+      // After the DOM updates, measure the same word again and
+      // correct scrollTop by exactly the difference so it stays put.
+      if (anchorTopBefore !== null && scroll) {
+        requestAnimationFrame(() => {
+          const tEl = document.getElementById("cell-" + word);
+          if (tEl) {
+            const anchorTopAfter = tEl.getBoundingClientRect().top;
+            scroll.scrollTop += (anchorTopAfter - anchorTopBefore);
+          }
+        });
+      }
     } else if (!isOpen) {
       setOpenWord(word);
     } else {
-      scrollFix.current = 0;
       setOpenWord(null);
     }
   }, [selCue, selContour, openWord]);
-
-  useLayoutEffect(() => {
-    if (scrollFix.current !== 0 && scrollRef.current) {
-      scrollRef.current.scrollTop += scrollFix.current;
-      scrollFix.current = 0;
-    }
-  });
 
   useEffect(() => {
     const scroll = scrollRef.current;
