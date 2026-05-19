@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const COLORS = ["#BEBEAA", "#5AA8F2", "#D94F28", "#7DD4C0", "#848095"];
 const CUES = ["sense", "describe", "recognise", "analyse", "interpret", "evaluate", "spark", "mull", "imagine", "craft", "configure", "cultivate", "empower", "inform", "inspire"];
@@ -19,13 +19,46 @@ const partnerOf = w => {
 const BORDER_DARK = "1px solid #1a1a1a";
 const BORDER_GREY = "1px solid rgba(0,0,0,0.15)";
 
-function Drawer({ word }) {
+function Drawer({ word, scrollRef }) {
   const w = WORDS[word] || {};
   const color = getColor(word);
   const idx = isCue(word) ? CUES.indexOf(word) : CONTOURS.indexOf(word);
   const label = (isCue(word) ? "CUE " : "CONTOUR ") + (idx + 1);
+  const [top, setTop] = useState(0);
+
+  useEffect(() => {
+    const el = document.getElementById("cell-" + word);
+    const container = scrollRef.current;
+    if (el && container) {
+      const cellRect = el.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      setTop(cellRect.bottom - containerRect.top + container.scrollTop);
+    }
+  }, [word]);
+
+  // Update position on scroll
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      const el = document.getElementById("cell-" + word);
+      if (el) {
+        const cellRect = el.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        setTop(cellRect.bottom - containerRect.top + container.scrollTop);
+      }
+    };
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [word]);
+
   return (
-    <div style={{ gridColumn: "1/-1", background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)", padding: "28px 24px 40px" }}>
+    <div style={{
+      position: "absolute", left: 0, right: 0, top,
+      background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)",
+      padding: "28px 24px 40px", zIndex: 20,
+      boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
+    }}>
       <div style={{ fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
         {label}
       </div>
@@ -158,50 +191,19 @@ export default function App() {
   const scrollRef = useRef(null);
   const savedScroll = useRef(null);
 
-  const scrollAdjust = useRef(null); // pixels to ADD to scrollTop after render
-
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
     const isOpen = word === openWord;
-    const scroll = scrollRef.current;
 
     if (!isSelected) {
-      if (openWord && scroll) {
-        // Only compensate when tapped word is BELOW the open drawer
-        const drawer = scroll.querySelector("[data-drawer]");
-        const dH = drawer ? drawer.getBoundingClientRect().height : 0;
-        const tEl = document.getElementById("cell-" + word);
-        const oEl = document.getElementById("cell-" + openWord);
-        if (tEl && oEl) {
-          const tappedBelow = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
-          if (tappedBelow && dH > 0) {
-            // After drawer collapses, content shifts up by dH
-            // We need scrollTop to also decrease by dH to keep tapped word in place
-            scrollAdjust.current = -dH;
-          }
-        }
-      }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
     } else if (!isOpen) {
       setOpenWord(word);
     } else {
-      // Closing drawer (tap 3) — same compensation if needed
-      const scroll2 = scrollRef.current;
-      if (scroll2) {
-        scrollAdjust.current = 0; // no shift when just closing
-      }
       setOpenWord(null);
     }
   }, [selCue, selContour, openWord]);
-
-  useLayoutEffect(() => {
-    const scroll = scrollRef.current;
-    if (scrollAdjust.current !== null && scroll) {
-      scroll.scrollTop += scrollAdjust.current;
-      scrollAdjust.current = null;
-    }
-  }); // every render
 
   useEffect(() => {
     const scroll = scrollRef.current;
@@ -238,26 +240,27 @@ export default function App() {
       </div>
 
       {/* THEORY SCREEN */}
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
+      <div style={{ flex: 1, minHeight: 0, position: "relative", overflow: "hidden" }}>
+      <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.map((pairs, gi) => (
             <div key={gi} style={{ display: "contents" }}>
               {gi > 0 && <div style={{ gridColumn: "1/-1", height: 1, background: "rgba(0,0,0,0.15)" }} />}
-              {pairs.flatMap(([cue, contour]) => {
-                const showDrawer = openWord === cue || openWord === contour;
-                return [
+              {pairs.flatMap(([cue, contour]) => [
                   <div key={cue} id={"cell-" + cue}>
                     <Cell word={cue} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
                   </div>,
                   <div key={contour} id={"cell-" + contour}>
                     <Cell word={contour} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
-                  </div>,
-                  showDrawer ? <Drawer key={cue + "-drawer"} word={openWord} /> : null
-                ];
-              })}
+                  </div>
+              ])}
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Floating drawer — absolutely positioned, no layout shift */}
+      {openWord && <Drawer word={openWord} scrollRef={scrollRef} />}
       </div>
 
       {/* THEORY FOOTER */}
