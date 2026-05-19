@@ -158,45 +158,42 @@ export default function App() {
   const scrollRef = useRef(null);
   const savedScroll = useRef(null);
 
+  const pendingScroll = useRef(null); // {top, drawerH, cellAboveDrawer}
+
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
     const isOpen = word === openWord;
     const scroll = scrollRef.current;
 
     if (!isSelected) {
-      // Measure everything BEFORE state change
       if (openWord && scroll) {
-        const tEl = document.getElementById("cell-" + word);
-        const oEl = document.getElementById("cell-" + openWord);
         const drawer = scroll.querySelector("[data-drawer]");
         const dH = drawer ? drawer.getBoundingClientRect().height : 0;
-        if (tEl && oEl) {
-          // If tapped word is below the open drawer, content will shift up by dH
-          const tappedBelow = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
-          savedScroll.current = scroll.scrollTop - (tappedBelow ? dH : 0);
-        } else {
-          savedScroll.current = scroll.scrollTop;
-        }
+        const tEl = document.getElementById("cell-" + word);
+        const oEl = document.getElementById("cell-" + openWord);
+        const tappedBelow = tEl && oEl &&
+          tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
+        // Store what scrollTop should be after the drawer collapses
+        pendingScroll.current = scroll.scrollTop - (tappedBelow ? dH : 0);
       }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
     } else if (!isOpen) {
       setOpenWord(word);
     } else {
-      if (scroll) savedScroll.current = scroll.scrollTop;
+      if (scroll) pendingScroll.current = scroll.scrollTop;
       setOpenWord(null);
     }
   }, [selCue, selContour, openWord]);
 
-  // Restore scroll after drawer closes (prevents jump)
-  // useLayoutEffect fires synchronously after DOM mutations, before paint
   useLayoutEffect(() => {
+    // Runs synchronously after DOM update, before browser paint
     const scroll = scrollRef.current;
-    if (!openWord && savedScroll.current !== null && scroll) {
-      scroll.scrollTop = savedScroll.current;
-      savedScroll.current = null;
+    if (pendingScroll.current !== null && scroll) {
+      scroll.scrollTop = pendingScroll.current;
+      pendingScroll.current = null;
     }
-  }, [openWord]);
+  }); // No deps — runs after every render, which is what we want
 
   useEffect(() => {
     const scroll = scrollRef.current;
