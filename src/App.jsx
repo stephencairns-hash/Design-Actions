@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 
 const COLORS = ["#BEBEAA", "#5AA8F2", "#D94F28", "#7DD4C0", "#848095"];
 const CUES = ["sense", "describe", "recognise", "analyse", "interpret", "evaluate", "spark", "mull", "imagine", "craft", "configure", "cultivate", "empower", "inform", "inspire"];
@@ -102,13 +102,13 @@ function BriefPage({ selCue, selContour, onBack }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "#fff", display: "flex", flexDirection: "column", zIndex: 50 }}>
-      {/* Header */}
+      {/* Header — exactly mirrors main header */}
       <div style={{ flexShrink: 0, height: 96, borderBottom: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY,
           fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
           Design Actions
         </div>
-        <div style={{ flex: 1, borderLeft: BORDER_GREY }} />
+        <div style={{ flex: 1 }} />
       </div>
 
       {/* Colour bars */}
@@ -164,14 +164,16 @@ export default function App() {
     const scroll = scrollRef.current;
 
     if (!isSelected) {
+      // Measure everything BEFORE state change
       if (openWord && scroll) {
-        const drawer = scroll.querySelector("[data-drawer]");
-        const dH = drawer ? drawer.getBoundingClientRect().height : 0;
         const tEl = document.getElementById("cell-" + word);
         const oEl = document.getElementById("cell-" + openWord);
+        const drawer = scroll.querySelector("[data-drawer]");
+        const dH = drawer ? drawer.getBoundingClientRect().height : 0;
         if (tEl && oEl) {
-          const below = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
-          savedScroll.current = scroll.scrollTop - (below ? dH : 0);
+          // If tapped word is below the open drawer, content will shift up by dH
+          const tappedBelow = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
+          savedScroll.current = scroll.scrollTop - (tappedBelow ? dH : 0);
         } else {
           savedScroll.current = scroll.scrollTop;
         }
@@ -186,12 +188,18 @@ export default function App() {
     }
   }, [selCue, selContour, openWord]);
 
-  useEffect(() => {
+  // Restore scroll after drawer closes (prevents jump)
+  // useLayoutEffect fires synchronously after DOM mutations, before paint
+  useLayoutEffect(() => {
     const scroll = scrollRef.current;
     if (!openWord && savedScroll.current !== null && scroll) {
       scroll.scrollTop = savedScroll.current;
       savedScroll.current = null;
     }
+  }, [openWord]);
+
+  useEffect(() => {
+    const scroll = scrollRef.current;
     if (openWord && scroll) {
       setTimeout(() => {
         const el = document.getElementById("cell-" + openWord);
