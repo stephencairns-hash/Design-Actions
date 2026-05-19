@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 
 const COLORS = ["#BEBEAA", "#5AA8F2", "#D94F28", "#7DD4C0", "#848095"];
 const CUES = ["sense", "describe", "recognise", "analyse", "interpret", "evaluate", "spark", "mull", "imagine", "craft", "configure", "cultivate", "empower", "inform", "inspire"];
@@ -8,7 +8,6 @@ const WORDS = {"sense": {"strap": "Sense the world even as you make sense of it"
 
 const GROUP_FOR = {};
 CUES.forEach((c, i) => { GROUP_FOR[c] = Math.floor(i / 3); GROUP_FOR[CONTOURS[i]] = Math.floor(i / 3); });
-
 const getColor = w => COLORS[GROUP_FOR[w]] || "#ccc";
 const isCue = w => CUES.includes(w);
 const partnerOf = w => {
@@ -19,59 +18,26 @@ const partnerOf = w => {
 const BORDER_DARK = "1px solid #1a1a1a";
 const BORDER_GREY = "1px solid rgba(0,0,0,0.15)";
 
-function Drawer({ word, scrollRef }) {
+function Drawer({ word }) {
   const w = WORDS[word] || {};
   const color = getColor(word);
   const idx = isCue(word) ? CUES.indexOf(word) : CONTOURS.indexOf(word);
   const label = (isCue(word) ? "CUE " : "CONTOUR ") + (idx + 1);
-  const [top, setTop] = useState(0);
-
-  useEffect(() => {
-    const el = document.getElementById("cell-" + word);
-    const container = scrollRef.current;
-    if (el && container) {
-      const cellRect = el.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      setTop(cellRect.bottom - containerRect.top + container.scrollTop);
-    }
-  }, [word]);
-
-  // Update position on scroll
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-    const onScroll = () => {
-      const el = document.getElementById("cell-" + word);
-      if (el) {
-        const cellRect = el.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        setTop(cellRect.bottom - containerRect.top + container.scrollTop);
-      }
-    };
-    container.addEventListener("scroll", onScroll, { passive: true });
-    return () => container.removeEventListener("scroll", onScroll);
-  }, [word]);
-
   return (
-    <div style={{
-      position: "absolute", left: 0, right: 0, top,
-      background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)",
-      padding: "28px 24px 40px", zIndex: 20,
-      boxShadow: "0 8px 24px rgba(0,0,0,0.08)"
-    }}>
+    <div data-drawer="true" style={{ gridColumn: "1 / -1", background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)", padding: "28px 24px 40px" }}>
       <div style={{ fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
         {label}
       </div>
-      {w.strap && (
+      {w.strap ? (
         <div style={{ fontSize: 19, fontStyle: "italic", color: "#1a1a1a", opacity: 0.9, lineHeight: 1.5, fontFamily: "Georgia, serif", marginBottom: 22 }}>
           {w.strap}
         </div>
-      )}
-      {w.desc && w.desc.split("\n\n").map((para, i) => (
+      ) : null}
+      {w.desc ? w.desc.split("\n\n").map((para, i) => (
         <p key={i} style={{ fontSize: 19, color: "#1a1a1a", lineHeight: 1.7, fontFamily: "Georgia, serif", opacity: 0.9, marginBottom: 18 }}>
           {para}
         </p>
-      ))}
+      )) : null}
     </div>
   );
 }
@@ -81,12 +47,8 @@ function Cell({ word, selCue, selContour, openWord, onTap }) {
   const isSelected = word === selCue || word === selContour;
   const isOpen = word === openWord;
   const partner = partnerOf(word);
-  const isComp = !isSelected &&
-    ((selCue && !selContour && partner === selCue) ||
-     (selContour && !selCue && partner === selContour));
-  const pairPartnerOpen = !isOpen && openWord &&
-    ((word === selContour && openWord === selCue) ||
-     (word === selCue && openWord === selContour));
+  const isComp = !isSelected && ((selCue && !selContour && partner === selCue) || (selContour && !selCue && partner === selContour));
+  const pairPartnerOpen = !isOpen && openWord && ((word === selContour && openWord === selCue) || (word === selCue && openWord === selContour));
 
   let bg = "#fff";
   if (isOpen) bg = color;
@@ -97,9 +59,7 @@ function Cell({ word, selCue, selContour, openWord, onTap }) {
   return (
     <div
       onClick={() => onTap(word)}
-      style={{ height: 96, display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: "pointer", background: bg, transition: "background .18s",
-        userSelect: "none", WebkitTapHighlightColor: "transparent" }}
+      style={{ height: 96, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: bg, transition: "background .18s", userSelect: "none", WebkitTapHighlightColor: "transparent" }}
     >
       <span style={{ fontSize: 24, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>
         {word}
@@ -110,41 +70,40 @@ function Cell({ word, selCue, selContour, openWord, onTap }) {
 
 function BriefPage({ selCue, selContour, onBack }) {
   const [location, setLocation] = useState("your location");
-  const [locationReady, setLocationReady] = useState(false);
+  const [ready, setReady] = useState(false);
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const dateStr = now.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" });
   const cueCapital = selCue ? selCue.charAt(0).toUpperCase() + selCue.slice(1) : "";
 
   useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(pos => {
-      const lat = pos.coords.latitude.toFixed(4);
-      const lon = pos.coords.longitude.toFixed(4);
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
-        .then(r => r.json())
-        .then(data => {
-          const a = data.address || {};
-          const place = a.neighbourhood || a.suburb || a.village || a.town || a.city || a.county || `${lat}, ${lon}`;
-          setLocation(place);
-          setLocationReady(true);
-        })
-        .catch(() => { setLocation(`${lat}, ${lon}`); setLocationReady(true); });
-    }, () => { setLocationReady(true); });
+    if (!navigator.geolocation) { setReady(true); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude.toFixed(4);
+        const lon = pos.coords.longitude.toFixed(4);
+        fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json")
+          .then(r => r.json())
+          .then(data => {
+            const a = data.address || {};
+            const place = a.neighbourhood || a.suburb || a.village || a.town || a.city || a.county || (lat + ", " + lon);
+            setLocation(place); setReady(true);
+          })
+          .catch(() => { setLocation(lat + ", " + lon); setReady(true); });
+      },
+      () => { setReady(true); }
+    );
   }, []);
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "#fff", display: "flex", flexDirection: "column", zIndex: 50 }}>
-      {/* Header — exactly mirrors main header */}
       <div style={{ flexShrink: 0, height: 96, borderBottom: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY,
-          fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
           Design Actions
         </div>
         <div style={{ flex: 1 }} />
       </div>
 
-      {/* Colour bars */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flexShrink: 0 }}>
         <div style={{ height: 96, background: selCue ? getColor(selCue) : "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span style={{ fontSize: 24, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>{selCue}</span>
@@ -154,30 +113,26 @@ function BriefPage({ selCue, selContour, onBack }) {
         </div>
       </div>
 
-      {/* Brief text */}
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "28px 24px 40px" }}>
         <p style={{ fontSize: 22, fontStyle: "italic", lineHeight: 1.6, fontFamily: "Georgia, serif", color: "#1a1a1a", opacity: 0.9, marginBottom: 28 }}>
           {cueCapital} {selContour} in {location} at {timeStr}, {dateStr}.
-          {!locationReady && <span style={{ animation: "blink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span>}
+          {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
         </p>
         <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.4, fontStyle: "italic" }}>
-          Brief generating…
+          Brief generating&hellip;
         </p>
       </div>
 
-      {/* Footer */}
       <div style={{ flexShrink: 0, height: 96, borderTop: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div onClick={onBack}
-          style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
+        <div onClick={onBack} style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
         </div>
         <div style={{ flex: 3 }} />
       </div>
 
-      <style>{`@keyframes blink { 0%,100%{opacity:.9} 50%{opacity:0} }`}</style>
+      <style>{"@keyframes daBlink { 0%,100%{opacity:.9} 50%{opacity:0} }"}</style>
     </div>
   );
 }
@@ -189,143 +144,139 @@ export default function App() {
   const [screen, setScreen] = useState("theory");
   const [showInfo, setShowInfo] = useState(false);
   const scrollRef = useRef(null);
-  const savedScroll = useRef(null);
+  const scrollFix = useRef(0);
 
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
     const isOpen = word === openWord;
+    const scroll = scrollRef.current;
 
     if (!isSelected) {
+      scrollFix.current = 0;
+      if (openWord && scroll) {
+        const drawer = scroll.querySelector('[data-drawer]');
+        const tEl = document.getElementById("cell-" + word);
+        const oEl = document.getElementById("cell-" + openWord);
+        if (drawer && tEl && oEl) {
+          const dH = drawer.getBoundingClientRect().height;
+          const below = tEl.getBoundingClientRect().top > oEl.getBoundingClientRect().bottom;
+          if (below) scrollFix.current = -dH;
+        }
+      }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
     } else if (!isOpen) {
       setOpenWord(word);
     } else {
+      scrollFix.current = 0;
       setOpenWord(null);
     }
   }, [selCue, selContour, openWord]);
 
+  useLayoutEffect(() => {
+    if (scrollFix.current !== 0 && scrollRef.current) {
+      scrollRef.current.scrollTop += scrollFix.current;
+      scrollFix.current = 0;
+    }
+  });
+
   useEffect(() => {
     const scroll = scrollRef.current;
     if (openWord && scroll) {
-      setTimeout(() => {
+      const t = setTimeout(() => {
         const el = document.getElementById("cell-" + openWord);
         if (el && scroll) {
           const offset = el.getBoundingClientRect().top - scroll.getBoundingClientRect().top;
           scroll.scrollBy({ top: offset, behavior: "smooth" });
         }
       }, 40);
+      return () => clearTimeout(t);
     }
   }, [openWord]);
 
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column",
-      fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
-      paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column", fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased", paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
 
-      {/* HEADER */}
       <div style={{ flexShrink: 0, height: 96, borderBottom: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY,
-          fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a" }}>
           Design Actions
         </div>
-        <div onClick={() => setShowInfo(true)}
-          style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-end",
-            paddingRight: 18, paddingTop: 20, borderLeft: BORDER_GREY,
-            fontFamily: "Georgia, serif", fontSize: 22, color: "#1a1a1a", cursor: "pointer" }}>
+        <div onClick={() => setShowInfo(v => !v)} style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-end", paddingRight: 18, paddingTop: 20, fontFamily: "Georgia, serif", fontSize: 22, color: "#1a1a1a", cursor: "pointer" }}>
           i
         </div>
       </div>
 
-      {/* THEORY SCREEN */}
-      <div style={{ flex: 1, minHeight: 0, position: "relative", overflow: "hidden" }}>
-      <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.map((pairs, gi) => (
             <div key={gi} style={{ display: "contents" }}>
-              {gi > 0 && <div style={{ gridColumn: "1/-1", height: 1, background: "rgba(0,0,0,0.15)" }} />}
-              {pairs.flatMap(([cue, contour]) => [
-                  <div key={cue} id={"cell-" + cue}>
-                    <Cell word={cue} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
-                  </div>,
-                  <div key={contour} id={"cell-" + contour}>
-                    <Cell word={contour} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
+              {gi > 0 ? <div style={{ gridColumn: "1 / -1", height: 1, background: "rgba(0,0,0,0.15)" }} /> : null}
+              {pairs.map(([cue, contour]) => {
+                const showDrawer = openWord === cue || openWord === contour;
+                return (
+                  <div key={cue} style={{ display: "contents" }}>
+                    <div id={"cell-" + cue}>
+                      <Cell word={cue} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
+                    </div>
+                    <div id={"cell-" + contour}>
+                      <Cell word={contour} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
+                    </div>
+                    {showDrawer ? <Drawer word={openWord} /> : null}
                   </div>
-              ])}
+                );
+              })}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Floating drawer — absolutely positioned, no layout shift */}
-      {openWord && <Drawer word={openWord} scrollRef={scrollRef} />}
-      </div>
-
-      {/* THEORY FOOTER */}
       <div style={{ flexShrink: 0, height: 96, borderTop: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
-          style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
+        <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }} style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </div>
         <div style={{ flex: 3, display: "flex", alignItems: "stretch" }}>
-          <div style={{ flex: 1, alignSelf: "stretch", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: selCue ? 18 : 10, fontWeight: selCue ? 500 : 400, color: selCue ? "#1a1a1a" : "rgba(0,0,0,0.25)",
-              letterSpacing: selCue ? "-.01em" : ".1em", textTransform: selCue ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: selCue ? 18 : 10, fontWeight: selCue ? 500 : 400, color: selCue ? "#1a1a1a" : "rgba(0,0,0,0.25)", letterSpacing: selCue ? "-.01em" : ".1em", textTransform: selCue ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
               {selCue || "cue"}
             </span>
           </div>
-          <div style={{ flex: 1, alignSelf: "stretch", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: selContour ? 18 : 10, fontWeight: selContour ? 500 : 400, color: selContour ? "#1a1a1a" : "rgba(0,0,0,0.25)",
-              letterSpacing: selContour ? "-.01em" : ".1em", textTransform: selContour ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: selContour ? 18 : 10, fontWeight: selContour ? 500 : 400, color: selContour ? "#1a1a1a" : "rgba(0,0,0,0.25)", letterSpacing: selContour ? "-.01em" : ".1em", textTransform: selContour ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
               {selContour || "contour"}
             </span>
           </div>
-          <div onClick={() => bothSelected && setScreen("brief")}
-            style={{ flex: 1, alignSelf: "stretch", display: "flex", flexDirection: "column", alignItems: "center",
-              justifyContent: "flex-start", paddingTop: 20,
-              background: bothSelected ? "#1a1a1a" : "#fff",
-              cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", lineHeight: 1.3 }}>
-            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase",
-              color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>here</span>
-            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase",
-              color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>now</span>
+          <div onClick={() => bothSelected && setScreen("brief")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, background: bothSelected ? "#1a1a1a" : "#fff", cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", lineHeight: 1.3 }}>
+            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>here</span>
+            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>now</span>
           </div>
         </div>
       </div>
 
-      {/* BRIEF PAGE */}
-      {screen === "brief" && (
+      {screen === "brief" ? (
         <BriefPage selCue={selCue} selContour={selContour} onBack={() => setScreen("theory")} />
-      )}
+      ) : null}
 
-      {/* INFO OVERLAY */}
-      {showInfo && (
-        <div onClick={() => setShowInfo(false)}
-          style={{ position: "absolute", top: 96, left: 0, right: 0, bottom: 0, background: "#fff",
-            overflowY: "auto", borderTop: BORDER_DARK, zIndex: 100, padding: "32px 24px 60px" }}>
+      {showInfo ? (
+        <div onClick={() => setShowInfo(false)} style={{ position: "absolute", top: 96, left: 0, right: 0, bottom: 0, background: "#fff", overflowY: "auto", borderTop: BORDER_DARK, zIndex: 100, padding: "32px 24px 60px" }}>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22 }}>
             Design Actions is a toolkit to help engage complex challenges.
           </p>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 28 }}>
-            Fifteen <em>cues</em> — verbs that activate inquiry — and fifteen <em>contours</em> — nouns that frame
-            the terrain of action. Tap one to select it. Tap again to read its description. Pair a cue and a contour
-            to activate the{" "}
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 500, letterSpacing: ".08em",
-              textTransform: "uppercase", border: "1px solid #1a1a1a", padding: "2px 8px" }}>here now</span>
+            Fifteen <em>cues</em> &mdash; verbs that activate inquiry &mdash; and fifteen <em>contours</em> &mdash; nouns that frame the terrain of action. Tap one to select it. Tap again to read its description. Pair a cue and a contour to activate the{" "}
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 500, letterSpacing: ".08em", textTransform: "uppercase", border: "1px solid #1a1a1a", padding: "2px 8px" }}>here now</span>
             {" "}prompt, generating a situated brief for action. Use the arrow to return to the word list and explore again.
           </p>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8 }}>
-            Stephen Cairns · David Neudecker<br />
-            Joshua Vargas · Denise Lee<br />
-            beta · Design Issues · MIT Press
+            Stephen Cairns &middot; David Neudecker<br />
+            Joshua Vargas &middot; Denise Lee<br />
+            beta &middot; Design Issues &middot; MIT Press
           </p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
