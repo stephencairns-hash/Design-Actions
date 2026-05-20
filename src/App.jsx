@@ -140,15 +140,15 @@ function BriefPage({ selCue, selContour, onBack }) {
         </p>
       </div>
 
-      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        {/* Arrow */}
-        <div onClick={onBack} style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer" }}>
+      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", background: "#fff" }}>
+        {/* Arrow — 25% */}
+        <div onClick={onBack} style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
         </div>
-        {/* Location + date — 2 units */}
-        <div style={{ flex: 2, display: "flex", alignItems: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: B_INNER }}>
+        {/* Location + date — 50% */}
+        <div style={{ display: "flex", alignItems: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: B_INNER, minWidth: 0 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
               {location}
@@ -158,11 +158,11 @@ function BriefPage({ selCue, selContour, onBack }) {
             </span>
           </div>
         </div>
-        {/* Copy icon */}
+        {/* Copy icon — 25% */}
         <div onClick={onCopy} title="copy brief"
-          style={{ flex: 1, display: "flex", alignItems: "flex-start",
+          style={{ display: "flex", alignItems: "flex-start",
             justifyContent: "center", paddingTop: 20,
-            cursor: "pointer", opacity: copied ? 1 : 0.5, transition: "opacity .2s" }}>
+            cursor: "pointer", opacity: copied ? 1 : 0.5, transition: "opacity .2s", minWidth: 0 }}>
           {copied ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
@@ -278,20 +278,20 @@ export default function App() {
         </div>
       </div>
 
-      {/* FOOTER — 4 equal flex:1 zones, borders don't affect widths */}
-      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
+      {/* FOOTER — 4 equal grid columns at exactly 25% each */}
+      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
         {/* ✕ */}
         <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
-          style={{ flex: 1, display: "flex", alignItems: "flex-start",
-            justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer" }}>
+          style={{ display: "flex", alignItems: "flex-start",
+            justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </div>
         {/* CUE */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start",
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
           justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10, paddingRight: 4,
-          borderRight: B_INNER, overflow: "hidden" }}>
+          borderRight: B_INNER, overflow: "hidden", minWidth: 0 }}>
           <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
             color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
             {selCue ? "CUE " + (CUES.indexOf(selCue) + 1) : "CUE"}
@@ -305,9 +305,9 @@ export default function App() {
           ) : null}
         </div>
         {/* CONTOUR */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start",
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
           justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10, paddingRight: 4,
-          borderRight: B_INNER, overflow: "hidden" }}>
+          borderRight: B_INNER, overflow: "hidden", minWidth: 0 }}>
           <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
             color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
             {selContour ? "CONTOUR " + (CONTOURS.indexOf(selContour) + 1) : "CONTOUR"}
@@ -322,10 +322,10 @@ export default function App() {
         </div>
         {/* HERE·NOW */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start",
+          style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
             justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10,
             background: bothSelected ? "#1a1a1a" : "#fff",
-            cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s" }}>
+            cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", minWidth: 0 }}>
           <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".12em", textTransform: "uppercase",
             color: bothSelected ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.4)",
             fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
