@@ -156,8 +156,8 @@ function BriefPage({ selCue, selContour, onBack }) {
               {timeStr}&ensp;{dateStr}
             </span>
           </div>
-          {/* Copy icon */}
-          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.35, transition: "opacity .2s", flexShrink: 0 }}>
+          {/* Copy icon — separated by vertical line */}
+          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", flexShrink: 0, borderLeft: "1px solid rgba(0,0,0,0.15)", paddingLeft: 16, marginLeft: 8, display: "flex", alignItems: "flex-start", paddingTop: 0 }}>
             {copied ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
@@ -322,7 +322,7 @@ export default function App() {
             background: bothSelected ? "#1a1a1a" : "#fff",
             cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s" }}>
           <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".12em", textTransform: "uppercase",
-            color: bothSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.22)",
+            color: bothSelected ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.4)",
             fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
             here&middot;now
           </span>
