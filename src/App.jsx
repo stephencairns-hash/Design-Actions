@@ -79,10 +79,19 @@ function Cell({ word, selCue, selContour, openWord, onTap }) {
 function BriefPage({ selCue, selContour, onBack }) {
   const [location, setLocation] = useState("your location");
   const [ready, setReady] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const onCopy = () => {
+    const text = cueCapital + " " + selContour + " in " + location + " at " + timeStr + ", " + dateStr + ".";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+    }
+  };
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const dateStr = now.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" });
   const cueCapital = selCue ? selCue.charAt(0).toUpperCase() + selCue.slice(1) : "";
+  const cueCapRef = cueCapital; // stable ref for onCopy closure
 
   useEffect(() => {
     if (!navigator.geolocation) { setReady(true); return; }
@@ -137,11 +146,28 @@ function BriefPage({ selCue, selContour, onBack }) {
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
         </div>
-        {/* Time/date in brief footer right zone */}
-        <div style={{ flex: 3, display: "flex", alignItems: "flex-start", paddingTop: 22, paddingLeft: 14 }}>
-          <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.3)", fontFamily: "'DM Sans', sans-serif" }}>
-            {timeStr}&ensp;{dateStr}
-          </span>
+        {/* Location + date */}
+        <div style={{ flex: 3, display: "flex", alignItems: "flex-start", justifyContent: "space-between", paddingTop: 20, paddingLeft: 14, paddingRight: 16 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+              {location}
+            </span>
+            <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.3)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+              {timeStr}&ensp;{dateStr}
+            </span>
+          </div>
+          {/* Copy icon */}
+          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.35, transition: "opacity .2s", flexShrink: 0 }}>
+            {copied ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </div>
         </div>
       </div>
 
@@ -289,13 +315,15 @@ export default function App() {
           ) : null}
         </div>
 
-        {/* HERE·NOW — 30% of right zone, primary action */}
+        {/* HERE·NOW — primary action, label row aligned with CUE/CONTOUR */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ flex: 1.2, display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 20, background: bothSelected ? "#1a1a1a" : "#fff",
+          style={{ flex: 1.2, display: "flex", flexDirection: "column", alignItems: "center",
+            justifyContent: "flex-start", paddingTop: 20,
+            background: bothSelected ? "#1a1a1a" : "#fff",
             cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s" }}>
-          <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: ".1em", textTransform: "uppercase",
-            color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>
+          <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".12em", textTransform: "uppercase",
+            color: bothSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.22)",
+            fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
             here&middot;now
           </span>
         </div>
