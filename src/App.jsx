@@ -156,8 +156,8 @@ function BriefPage({ selCue, selContour, onBack }) {
               {timeStr}&ensp;{dateStr}
             </span>
           </div>
-          {/* Copy icon — separated by vertical line */}
-          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", flexShrink: 0, borderLeft: "1px solid rgba(0,0,0,0.15)", paddingLeft: 16, marginLeft: 8, display: "flex", alignItems: "flex-start", paddingTop: 0 }}>
+          {/* Copy icon — full-height vertical line separator */}
+          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", flexShrink: 0, alignSelf: "stretch", borderLeft: "1px solid rgba(0,0,0,0.15)", paddingLeft: 16, marginLeft: 8, display: "flex", alignItems: "flex-start", paddingTop: 0 }}>
             {copied ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
@@ -317,8 +317,8 @@ export default function App() {
 
         {/* HERE·NOW — primary action, label row aligned with CUE/CONTOUR */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ flex: 1.2, display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "flex-start", paddingTop: 20,
+          style={{ flex: 1.2, display: "flex", flexDirection: "column", alignItems: "flex-start",
+            justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12,
             background: bothSelected ? "#1a1a1a" : "#fff",
             cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s" }}>
           <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".12em", textTransform: "uppercase",
