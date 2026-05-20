@@ -25,7 +25,7 @@ function Drawer({ word }) {
   const label = (isCue(word) ? "CUE " : "CONTOUR ") + (idx + 1);
   return (
     <div data-drawer="true" style={{ gridColumn: "1 / -1", background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)", padding: "28px 24px 40px" }}>
-      <div style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
         {label}
       </div>
       {w.strap ? (
@@ -236,22 +236,22 @@ export default function App() {
           </svg>
         </div>
         <div style={{ flex: 3, display: "flex", alignItems: "stretch" }}>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
               {selCue ? "CUE " + (CUES.indexOf(selCue) + 1) : "CUE"}
             </span>
             {selCue ? (
-              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>
+              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 5 }}>
                 {selCue}
               </span>
             ) : null}
           </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
               {selContour ? "CONTOUR " + (CONTOURS.indexOf(selContour) + 1) : "CONTOUR"}
             </span>
             {selContour ? (
-              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>
+              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 5 }}>
                 {selContour}
               </span>
             ) : null}
