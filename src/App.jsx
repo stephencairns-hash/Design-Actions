@@ -15,8 +15,14 @@ const partnerOf = w => {
   return null;
 };
 
-const BORDER_DARK = "1px solid #1a1a1a";
-const BORDER_GREY = "1px solid rgba(0,0,0,0.15)";
+// Unified line system — one weight throughout
+const B_OUTER = "1px solid #1a1a1a";       // outer frame: header/footer top/bottom
+const B_INNER = "1px solid rgba(0,0,0,0.15)"; // inner dividers: consistent everywhere
+
+// Cell height — tighter, more instrument-like
+const CELL_H = 80;
+const HDR_H = 96;
+const FTR_H = 96;
 
 function Drawer({ word }) {
   const w = WORDS[word] || {};
@@ -24,7 +30,7 @@ function Drawer({ word }) {
   const idx = isCue(word) ? CUES.indexOf(word) : CONTOURS.indexOf(word);
   const label = (isCue(word) ? "CUE " : "CONTOUR ") + (idx + 1);
   return (
-    <div data-drawer="true" style={{ gridColumn: "1 / -1", background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)", padding: "28px 24px 40px" }}>
+    <div data-drawer="true" style={{ gridColumn: "1 / -1", background: color, borderTop: B_INNER, padding: "28px 24px 40px" }}>
       <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
         {label}
       </div>
@@ -59,7 +65,9 @@ function Cell({ word, selCue, selContour, openWord, onTap }) {
   return (
     <div
       onClick={() => onTap(word)}
-      style={{ height: 96, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: bg, transition: "background .18s", userSelect: "none", WebkitTapHighlightColor: "transparent" }}
+      style={{ height: CELL_H, display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", background: bg, transition: "background .18s",
+        userSelect: "none", WebkitTapHighlightColor: "transparent" }}
     >
       <span style={{ fontSize: 24, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>
         {word}
@@ -97,18 +105,18 @@ function BriefPage({ selCue, selContour, onBack }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "#fff", display: "flex", flexDirection: "column", zIndex: 50 }}>
-      <div style={{ flexShrink: 0, height: 96, borderBottom: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
           Design Actions
         </div>
         <div style={{ flex: 1 }} />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flexShrink: 0 }}>
-        <div style={{ height: 96, background: selCue ? getColor(selCue) : "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ height: CELL_H, background: selCue ? getColor(selCue) : "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span style={{ fontSize: 24, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>{selCue}</span>
         </div>
-        <div style={{ height: 96, background: selContour ? getColor(selContour) : "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ height: CELL_H, background: selContour ? getColor(selContour) : "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span style={{ fontSize: 24, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>{selContour}</span>
         </div>
       </div>
@@ -123,13 +131,18 @@ function BriefPage({ selCue, selContour, onBack }) {
         </p>
       </div>
 
-      <div style={{ flexShrink: 0, height: 96, borderTop: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div onClick={onBack} style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
+      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
+        <div onClick={onBack} style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
         </div>
-        <div style={{ flex: 3 }} />
+        {/* Time/date in brief footer right zone */}
+        <div style={{ flex: 3, display: "flex", alignItems: "flex-start", paddingTop: 22, paddingLeft: 14 }}>
+          <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.3)", fontFamily: "'DM Sans', sans-serif" }}>
+            {timeStr}&ensp;{dateStr}
+          </span>
+        </div>
       </div>
 
       <style>{"@keyframes daBlink { 0%,100%{opacity:.9} 50%{opacity:0} }"}</style>
@@ -151,7 +164,6 @@ export default function App() {
     const scroll = scrollRef.current;
 
     if (!isSelected) {
-      // Capture the tapped word's position on screen BEFORE anything changes
       let anchorTopBefore = null;
       if (openWord && scroll) {
         const tEl = document.getElementById("cell-" + word);
@@ -159,8 +171,6 @@ export default function App() {
       }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(null);
-      // After the DOM updates, measure the same word again and
-      // correct scrollTop by exactly the difference so it stays put.
       if (anchorTopBefore !== null && scroll) {
         requestAnimationFrame(() => {
           const tEl = document.getElementById("cell-" + word);
@@ -194,17 +204,26 @@ export default function App() {
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column", fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased", paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column",
+      fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
+      paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
 
-      <div style={{ flexShrink: 0, height: 96, borderBottom: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: BORDER_GREY, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a" }}>
+      {/* HEADER */}
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
+          borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
+          fontWeight: 500, color: "#1a1a1a" }}>
           Design Actions
         </div>
-        <div onClick={() => setShowInfo(v => !v)} style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-end", paddingRight: 18, paddingTop: 20, fontFamily: "Georgia, serif", fontSize: 22, color: "#1a1a1a", cursor: "pointer" }}>
+        <div onClick={() => setShowInfo(v => !v)}
+          style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-end",
+            paddingRight: 18, paddingTop: 20, fontFamily: "Georgia, serif",
+            fontSize: 22, color: "#1a1a1a", cursor: "pointer" }}>
           i
         </div>
       </div>
 
+      {/* WORD GRID */}
       <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.map((pairs, gi) => (
@@ -229,52 +248,80 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{ flexShrink: 0, height: 96, borderTop: BORDER_DARK, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }} style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY, cursor: "pointer" }}>
+      {/* FOOTER */}
+      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
+        {/* ✕ — left 25% */}
+        <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
+          style={{ flex: 1, maxWidth: "25%", display: "flex", alignItems: "flex-start",
+            justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </div>
-        <div style={{ flex: 3, display: "flex", alignItems: "stretch" }}>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-              {selCue ? "CUE " + (CUES.indexOf(selCue) + 1) : "CUE"}
+
+        {/* CUE field */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start",
+          justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: B_INNER }}>
+          <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
+            color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+            {selCue ? "CUE " + (CUES.indexOf(selCue) + 1) : "CUE"}
+          </span>
+          {selCue ? (
+            <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em",
+              fontFamily: "'DM Sans', sans-serif", marginTop: 5, lineHeight: 1 }}>
+              {selCue}
             </span>
-            {selCue ? (
-              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 5 }}>
-                {selCue}
-              </span>
-            ) : null}
-          </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
-              {selContour ? "CONTOUR " + (CONTOURS.indexOf(selContour) + 1) : "CONTOUR"}
+          ) : null}
+        </div>
+
+        {/* CONTOUR field */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start",
+          justifyContent: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: B_INNER }}>
+          <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
+            color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+            {selContour ? "CONTOUR " + (CONTOURS.indexOf(selContour) + 1) : "CONTOUR"}
+          </span>
+          {selContour ? (
+            <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em",
+              fontFamily: "'DM Sans', sans-serif", marginTop: 5, lineHeight: 1 }}>
+              {selContour}
             </span>
-            {selContour ? (
-              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 5 }}>
-                {selContour}
-              </span>
-            ) : null}
-          </div>
-          <div onClick={() => bothSelected && setScreen("brief")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, background: bothSelected ? "#1a1a1a" : "#fff", cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", lineHeight: 1.3 }}>
-            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>here</span>
-            <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>now</span>
-          </div>
+          ) : null}
+        </div>
+
+        {/* HERE·NOW — 30% of right zone, primary action */}
+        <div onClick={() => bothSelected && setScreen("brief")}
+          style={{ flex: 1.2, display: "flex", alignItems: "flex-start", justifyContent: "center",
+            paddingTop: 20, background: bothSelected ? "#1a1a1a" : "#fff",
+            cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s" }}>
+          <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: ".1em", textTransform: "uppercase",
+            color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>
+            here&middot;now
+          </span>
         </div>
       </div>
 
+      {/* BRIEF PAGE */}
       {screen === "brief" ? (
         <BriefPage selCue={selCue} selContour={selContour} onBack={() => setScreen("theory")} />
       ) : null}
 
+      {/* INFO OVERLAY */}
       {showInfo ? (
-        <div onClick={() => setShowInfo(false)} style={{ position: "absolute", top: 96, left: 0, right: 0, bottom: 0, background: "#fff", overflowY: "auto", borderTop: BORDER_DARK, zIndex: 100, padding: "32px 24px 60px" }}>
+        <div onClick={() => setShowInfo(false)}
+          style={{ position: "absolute", top: HDR_H, left: 0, right: 0, bottom: 0,
+            background: "#fff", overflowY: "auto", borderTop: B_OUTER, zIndex: 100,
+            padding: "32px 24px 60px" }}>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22 }}>
             Design Actions is a toolkit to help engage complex challenges.
           </p>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 28 }}>
-            Fifteen <em>cues</em> &mdash; verbs that activate inquiry &mdash; and fifteen <em>contours</em> &mdash; nouns that frame the terrain of action. Tap one to select it. Tap again to read its description. Pair a cue and a contour to activate the{" "}
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 500, letterSpacing: ".08em", textTransform: "uppercase", border: "1px solid #1a1a1a", padding: "2px 8px" }}>here now</span>
+            Fifteen <em>cues</em> — verbs that activate inquiry — and fifteen <em>contours</em> — nouns
+            that frame the terrain of action. Tap one to select it. Tap again to read its description.
+            Pair a cue and a contour to activate the{" "}
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 500,
+              letterSpacing: ".1em", textTransform: "uppercase", border: "1px solid #1a1a1a",
+              padding: "2px 8px" }}>here&middot;now</span>
             {" "}prompt, generating a situated brief for action. Use the arrow to return to the word list and explore again.
           </p>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8 }}>
