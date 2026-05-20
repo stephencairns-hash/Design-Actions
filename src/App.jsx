@@ -147,7 +147,7 @@ function BriefPage({ selCue, selContour, onBack }) {
           </svg>
         </div>
         {/* Location + date */}
-        <div style={{ flex: 3, display: "flex", alignItems: "flex-start", justifyContent: "space-between", paddingTop: 20, paddingLeft: 14, paddingRight: 16 }}>
+        <div style={{ flex: 3, display: "flex", alignItems: "flex-start", paddingTop: 20, paddingLeft: 14 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
               {location}
@@ -156,18 +156,21 @@ function BriefPage({ selCue, selContour, onBack }) {
               {timeStr}&ensp;{dateStr}
             </span>
           </div>
-          {/* Copy icon — full-height vertical line separator */}
-          <div onClick={onCopy} title="copy brief" style={{ cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", flexShrink: 0, alignSelf: "stretch", borderLeft: "1px solid rgba(0,0,0,0.15)", paddingLeft: 16, marginLeft: 8, display: "flex", alignItems: "flex-start", paddingTop: 0 }}>
-            {copied ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-              </svg>
-            )}
-          </div>
+        </div>
+        {/* Copy icon — same width as arrow cell, full height, B_INNER left border */}
+        <div onClick={onCopy} title="copy brief"
+          style={{ flexShrink: 0, width: "25%", display: "flex", alignItems: "flex-start",
+            justifyContent: "center", paddingTop: 20, borderLeft: "1px solid rgba(0,0,0,0.15)",
+            cursor: "pointer", opacity: copied ? 1 : 0.5, transition: "opacity .2s" }}>
+          {copied ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          )}
         </div>
       </div>
 
