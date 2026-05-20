@@ -25,7 +25,7 @@ function Drawer({ word }) {
   const label = (isCue(word) ? "CUE " : "CONTOUR ") + (idx + 1);
   return (
     <div data-drawer="true" style={{ gridColumn: "1 / -1", background: color, borderTop: "0.5px solid rgba(0,0,0,0.12)", padding: "28px 24px 40px" }}>
-      <div style={{ fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", marginBottom: 14, fontFamily: "'DM Sans', sans-serif" }}>
         {label}
       </div>
       {w.strap ? (
@@ -236,15 +236,25 @@ export default function App() {
           </svg>
         </div>
         <div style={{ flex: 3, display: "flex", alignItems: "stretch" }}>
-          <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: selCue ? 18 : 10, fontWeight: selCue ? 500 : 400, color: selCue ? "#1a1a1a" : "rgba(0,0,0,0.25)", letterSpacing: selCue ? "-.01em" : ".1em", textTransform: selCue ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
-              {selCue || "cue"}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+              {selCue ? "CUE " + (CUES.indexOf(selCue) + 1) : "CUE"}
             </span>
+            {selCue ? (
+              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>
+                {selCue}
+              </span>
+            ) : null}
           </div>
-          <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: BORDER_GREY }}>
-            <span style={{ fontSize: selContour ? 18 : 10, fontWeight: selContour ? 500 : 400, color: selContour ? "#1a1a1a" : "rgba(0,0,0,0.25)", letterSpacing: selContour ? "-.01em" : ".1em", textTransform: selContour ? "none" : "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
-              {selContour || "contour"}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, borderRight: BORDER_GREY }}>
+            <span style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
+              {selContour ? "CONTOUR " + (CONTOURS.indexOf(selContour) + 1) : "CONTOUR"}
             </span>
+            {selContour ? (
+              <span style={{ fontSize: 16, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em", fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>
+                {selContour}
+              </span>
+            ) : null}
           </div>
           <div onClick={() => bothSelected && setScreen("brief")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20, background: bothSelected ? "#1a1a1a" : "#fff", cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", lineHeight: 1.3 }}>
             <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: bothSelected ? "#fff" : "rgba(0,0,0,0.22)", fontFamily: "'DM Sans', sans-serif" }}>here</span>
