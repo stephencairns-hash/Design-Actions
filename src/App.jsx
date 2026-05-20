@@ -114,11 +114,11 @@ function BriefPage({ selCue, selContour, onBack }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "#fff", display: "flex", flexDirection: "column", zIndex: 50 }}>
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif", minWidth: 0 }}>
           Design Actions
         </div>
-        <div style={{ flex: 1 }} />
+        <div style={{ minWidth: 0 }} />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flexShrink: 0 }}>
@@ -239,16 +239,16 @@ export default function App() {
       paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
 
       {/* HEADER */}
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "flex", alignItems: "stretch", background: "#fff" }}>
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
           borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
-          fontWeight: 500, color: "#1a1a1a" }}>
+          fontWeight: 500, color: "#1a1a1a", minWidth: 0 }}>
           Design Actions
         </div>
         <div onClick={() => setShowInfo(v => !v)}
-          style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-end",
+          style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end",
             paddingRight: 18, paddingTop: 20, fontFamily: "Georgia, serif",
-            fontSize: 22, color: "#1a1a1a", cursor: "pointer" }}>
+            fontSize: 22, color: "#1a1a1a", cursor: "pointer", minWidth: 0 }}>
           i
         </div>
       </div>
