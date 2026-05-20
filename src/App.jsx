@@ -141,8 +141,9 @@ function BriefPage({ selCue, selContour, onBack }) {
       </div>
 
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", background: "#fff" }}>
-        {/* Arrow — 25% */}
-        <div onClick={onBack} style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
+        {/* Arrow — fills cell, TE-style */}
+        <div onClick={onBack} style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
+          paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
@@ -158,11 +159,11 @@ function BriefPage({ selCue, selContour, onBack }) {
             </span>
           </div>
         </div>
-        {/* Copy icon — 25% */}
+        {/* Copy icon — classic, centred, same weight */}
         <div onClick={onCopy} title="copy brief"
           style={{ display: "flex", alignItems: "flex-start",
             justifyContent: "center", paddingTop: 20,
-            cursor: "pointer", opacity: copied ? 1 : 0.5, transition: "opacity .2s", minWidth: 0 }}>
+            cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", minWidth: 0 }}>
           {copied ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
@@ -246,10 +247,13 @@ export default function App() {
           Design Actions
         </div>
         <div onClick={() => setShowInfo(v => !v)}
-          style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end",
-            paddingRight: 18, paddingTop: 20, fontFamily: "Georgia, serif",
-            fontSize: 22, color: "#1a1a1a", cursor: "pointer", minWidth: 0 }}>
-          i
+          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
+            paddingTop: 20, cursor: "pointer", minWidth: 0 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="8" strokeWidth="2" />
+            <line x1="12" y1="12" x2="12" y2="16" />
+          </svg>
         </div>
       </div>
 
@@ -280,10 +284,10 @@ export default function App() {
 
       {/* FOOTER — 4 equal grid columns at exactly 25% each */}
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
-        {/* ✕ */}
+        {/* ✕ — classic, centred */}
         <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
-          style={{ display: "flex", alignItems: "flex-start",
-            justifyContent: "center", paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
+          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
+            paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -320,17 +324,24 @@ export default function App() {
             </span>
           ) : null}
         </div>
-        {/* HERE·NOW */}
+        {/* HERE·NOW — circle button, TE-style */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
-            justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10,
-            background: bothSelected ? "#1a1a1a" : "#fff",
-            cursor: bothSelected ? "pointer" : "not-allowed", transition: "background .2s", minWidth: 0 }}>
-          <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".12em", textTransform: "uppercase",
-            color: bothSelected ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.4)",
-            fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
-            here&middot;now
-          </span>
+          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
+            paddingTop: 0, cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0, overflow: "hidden" }}>
+          <div style={{
+            width: "100%", aspectRatio: "1", borderRadius: "50%",
+            background: bothSelected ? "#1a1a1a" : "transparent",
+            border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "background .2s, border .2s", marginTop: 0
+          }}>
+            <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".1em", textTransform: "uppercase",
+              color: bothSelected ? "#fff" : "rgba(0,0,0,0.3)",
+              fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap",
+              textAlign: "center" }}>
+              here&middot;now
+            </span>
+          </div>
         </div>
       </div>
 
