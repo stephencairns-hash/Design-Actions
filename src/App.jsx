@@ -143,7 +143,7 @@ function BriefPage({ selCue, selContour, onBack }) {
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", background: "#fff" }}>
         {/* Arrow — fills cell, TE-style */}
         <div onClick={onBack} style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-          paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
+          paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0, overflow: "hidden" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
@@ -159,11 +159,12 @@ function BriefPage({ selCue, selContour, onBack }) {
             </span>
           </div>
         </div>
-        {/* Copy icon — classic, centred, same weight */}
+        {/* Copy icon — centred, same as arrow */}
         <div onClick={onCopy} title="copy brief"
           style={{ display: "flex", alignItems: "flex-start",
             justifyContent: "center", paddingTop: 20,
-            cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s", minWidth: 0 }}>
+            cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s",
+            minWidth: 0, overflow: "hidden" }}>
           {copied ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
@@ -240,7 +241,7 @@ export default function App() {
       paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
 
       {/* HEADER */}
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "3fr 1fr", background: "#fff" }}>
         <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
           borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
           fontWeight: 500, color: "#1a1a1a", minWidth: 0 }}>
@@ -248,12 +249,9 @@ export default function App() {
         </div>
         <div onClick={() => setShowInfo(v => !v)}
           style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 20, cursor: "pointer", minWidth: 0 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="8" strokeWidth="2" />
-            <line x1="12" y1="12" x2="12" y2="16" />
-          </svg>
+            paddingTop: 22, cursor: "pointer", minWidth: 0,
+            fontFamily: "Georgia, serif", fontSize: 20, color: "#1a1a1a" }}>
+          i
         </div>
       </div>
 
