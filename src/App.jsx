@@ -375,12 +375,12 @@ export default function App() {
                 <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>sense</div>
                 <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>lifeworlds</div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", height: 80 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
                 <div style={{ borderRight: B_INNER }} />
                 <div style={{ borderRight: B_INNER }} />
                 <div style={{ borderRight: B_INNER }} />
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
-                  <div style={{ width: "100%", aspectRatio: "1", borderRadius: "50%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 0 }}>
+                  <div style={{ width: 88, height: 88, borderRadius: "50%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 500, letterSpacing: ".08em", textTransform: "uppercase", color: "#fff", textAlign: "center", lineHeight: 1.4 }}>
                       here&middot;now
                     </span>
