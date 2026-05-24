@@ -138,10 +138,13 @@ function BriefPage({ selCue, selContour, onBack }) {
           {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
         </p>
         <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
-          Design practice attends to what is immediate and particular — the specific textures of this place, this moment, these relations. To sense lifeworlds here is to resist abstraction: to notice what is present before reaching for what should be. What materials, what movements, what constraints and possibilities does this situation offer? Begin by attending to what you can observe directly.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
         <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35 }}>
-          Consider who else inhabits this world — the other actors, human and nonhuman, whose presence shapes what is possible here. Your brief is to sense these lifeworlds with precision and care, making what you find available for shared inquiry.
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
         </p>
       </div>
 
