@@ -137,15 +137,61 @@ function BriefPage({ selCue, selContour, onBack }) {
           {cueCapital} {selContour} in {location} at {timeStr}, {dateStr}.
           {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
         </p>
+        {/* TEXT */}
         <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         </p>
+
+        {/* IMAGE */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ width: "100%", aspectRatio: "4/3", background: "rgba(0,0,0,0.06)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(0,0,0,0.2)", fontFamily: "'DM Sans', sans-serif" }}>image</span>
+          </div>
+          <div style={{ padding: "6px 0 0", fontSize: 11, letterSpacing: ".04em", color: "rgba(0,0,0,0.35)", fontFamily: "'DM Sans', sans-serif" }}>
+            What do you see from where you stand?
+          </div>
+        </div>
+
+        {/* TEXT */}
         <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
           Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
-        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35 }}>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+        {/* PROVOCATION */}
+        <div style={{ border: "1px solid #1a1a1a", padding: 20, marginBottom: 18, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 80 }}>
+          <span style={{ fontFamily: "Georgia, serif", fontSize: 19, fontStyle: "italic", color: "#1a1a1a", textAlign: "center", lineHeight: 1.5 }}>
+            Who else inhabits this world right now?
+          </span>
+        </div>
+
+        {/* TEXT */}
+        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto.
         </p>
+
+        {/* IMAGE square */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ width: "100%", aspectRatio: "1/1", background: "rgba(0,0,0,0.06)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(0,0,0,0.2)", fontFamily: "'DM Sans', sans-serif" }}>image</span>
+          </div>
+          <div style={{ padding: "6px 0 0", fontSize: 11, letterSpacing: ".04em", color: "rgba(0,0,0,0.35)", fontFamily: "'DM Sans', sans-serif" }}>
+            A detail worth attending to.
+          </div>
+        </div>
+
+        {/* TEXT */}
+        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
+          Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+        </p>
+
+        {/* GRID */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderTop: "1px solid rgba(0,0,0,0.15)", borderLeft: "1px solid rgba(0,0,0,0.15)", marginBottom: 32 }}>
+          {["What persists here?", "What is temporary?", "What is absent?", "What surprises you?"].map((q, i) => (
+            <div key={i} style={{ borderRight: "1px solid rgba(0,0,0,0.15)", borderBottom: "1px solid rgba(0,0,0,0.15)", padding: "14px 12px", fontFamily: "Georgia, serif", fontSize: 16, fontStyle: "italic", color: "#1a1a1a", lineHeight: 1.5 }}>
+              {q}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", background: "#fff" }}>
