@@ -99,11 +99,13 @@ function BriefPage({ selCue, selContour, onBack }) {
       pos => {
         const lat = pos.coords.latitude.toFixed(4);
         const lon = pos.coords.longitude.toFixed(4);
-        fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json")
+        fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json", {
+            headers: { "Accept-Language": "en", "User-Agent": "DesignActions/1.0" }
+          })
           .then(r => r.json())
           .then(data => {
             const a = data.address || {};
-            const place = a.neighbourhood || a.suburb || a.village || a.town || a.city || a.county || (lat + ", " + lon);
+            const place = a.neighbourhood || a.suburb || a.quarter || a.village || a.town || a.city_district || a.city || a.county || (lat + ", " + lon);
             setLocation(place); setReady(true);
           })
           .catch(() => { setLocation(lat + ", " + lon); setReady(true); });
@@ -131,12 +133,15 @@ function BriefPage({ selCue, selContour, onBack }) {
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "28px 24px 40px" }}>
-        <p style={{ fontSize: 22, fontStyle: "italic", lineHeight: 1.6, fontFamily: "Georgia, serif", color: "#1a1a1a", opacity: 0.9, marginBottom: 28 }}>
+        <p style={{ fontSize: 19, fontStyle: "italic", lineHeight: 1.7, fontFamily: "Georgia, serif", color: "#1a1a1a", opacity: 0.9, marginBottom: 28 }}>
           {cueCapital} {selContour} in {location} at {timeStr}, {dateStr}.
           {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
         </p>
-        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.4, fontStyle: "italic" }}>
-          Brief generating&hellip;
+        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35, marginBottom: 18 }}>
+          Design practice attends to what is immediate and particular — the specific textures of this place, this moment, these relations. To sense lifeworlds here is to resist abstraction: to notice what is present before reaching for what should be. What materials, what movements, what constraints and possibilities does this situation offer? Begin by attending to what you can observe directly.
+        </p>
+        <p style={{ fontSize: 19, fontFamily: "Georgia, serif", lineHeight: 1.7, color: "#1a1a1a", opacity: 0.35 }}>
+          Consider who else inhabits this world — the other actors, human and nonhuman, whose presence shapes what is possible here. Your brief is to sense these lifeworlds with precision and care, making what you find available for shared inquiry.
         </p>
       </div>
 
