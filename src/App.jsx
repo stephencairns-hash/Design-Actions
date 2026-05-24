@@ -351,53 +351,48 @@ export default function App() {
       ) : null}
 
       {/* INFO OVERLAY */}
-        {showInfo ? (
+         {showInfo ? (
         <div onClick={() => setShowInfo(false)}
           style={{ position: "absolute", top: HDR_H, left: 0, right: 0, bottom: 0,
             background: "#fff", overflowY: "auto", borderTop: B_OUTER, zIndex: 100,
-            padding: "32px 24px 60px" }}>
-          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22 }}>
+            padding: "32px 0 60px" }}>
+          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
             Design Actions is a toolkit to help engage complex challenges.
           </p>
-          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22 }}>
+          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
             Fifteen <em>cues</em> — verbs that activate inquiry — and fifteen <em>contours</em> — nouns
             that frame the terrain of action. Tap one to select. Tap again to read the description.
             Pair a cue and a contour to activate the <em>here&middot;now</em> prompt:
           </p>
-          {/* Schematic diagram */}
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
-              borderTop: B_INNER, borderLeft: B_INNER, borderRight: B_INNER }}>
-              <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 20, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif",
-                background: "#BEBEAA", borderRight: B_INNER }}>
-                sense
-              </div>
-              <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 20, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif",
-                background: "#BEBEAA" }}>
-                lifeworlds
-              </div>
+          {/* Schematic diagram — full width, single outer border */}
+          <div style={{ marginBottom: 22 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "0 0 4px", margin: "0 24px" }}>
+              <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif" }}>cue</div>
+              <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif" }}>contour</div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr",
-              borderTop: B_OUTER, borderLeft: B_INNER, borderRight: B_INNER, borderBottom: B_INNER }}>
-              <div style={{ borderRight: B_INNER }} />
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
-                <div style={{ width: "100%", aspectRatio: "1", borderRadius: "50%", background: "#1a1a1a",
-                  display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 500,
-                    letterSpacing: ".08em", textTransform: "uppercase", color: "#fff",
-                    textAlign: "center", lineHeight: 1.4 }}>
-                    here&middot;now
-                  </span>
+            <div style={{ border: B_INNER }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: B_OUTER }}>
+                <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>sense</div>
+                <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>lifeworlds</div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", height: 80 }}>
+                <div style={{ borderRight: B_INNER }} />
+                <div style={{ borderRight: B_INNER }} />
+                <div style={{ borderRight: B_INNER }} />
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "hidden" }}>
+                  <div style={{ width: "100%", aspectRatio: "1", borderRadius: "50%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 500, letterSpacing: ".08em", textTransform: "uppercase", color: "#fff", textAlign: "center", lineHeight: 1.4 }}>
+                      here&middot;now
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 28 }}>
+          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 28, padding: "0 24px" }}>
             This will generate a situated brief for action. Use the arrow to return to the word list and explore again.
           </p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8 }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8, padding: "0 24px" }}>
             Stephen Cairns &middot; David Neudecker<br />
             Joshua Vargas &middot; Denise Lee<br />
             beta &middot; Design Issues &middot; MIT Press
