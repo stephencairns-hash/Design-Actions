@@ -370,7 +370,7 @@ export default function App() {
               <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif" }}>cue</div>
               <div style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif" }}>contour</div>
             </div>
-            <div style={{ border: B_INNER }}>
+            <div style={{ borderTop: B_INNER, borderLeft: B_INNER, borderRight: B_INNER }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: B_OUTER }}>
                 <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>sense</div>
                 <div style={{ height: 64, background: "#BEBEAA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 500, letterSpacing: "-.02em", fontFamily: "'DM Sans', sans-serif" }}>lifeworlds</div>
