@@ -273,19 +273,9 @@ export default function App() {
     }
   }, [selCue, selContour, openWord]);
 
-  useEffect(() => {
-    const scroll = scrollRef.current;
-    if (openWord && scroll) {
-      const t = setTimeout(() => {
-        const el = document.getElementById("cell-" + openWord);
-        if (el && scroll) {
-          const offset = el.getBoundingClientRect().top - scroll.getBoundingClientRect().top;
-          scroll.scrollBy({ top: offset, behavior: "smooth" });
-        }
-      }, 40);
-      return () => clearTimeout(t);
-    }
-  }, [openWord]);
+  // No auto-scroll when drawer opens. The tapped cell stays in place;
+  // the drawer pushes content below it down. If the drawer extends past
+  // the bottom of the visible area, the user can scroll manually.
 
   const bothSelected = selCue && selContour;
 
@@ -318,25 +308,31 @@ export default function App() {
       {/* WORD GRID */}
       <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-          {PAIR_GROUPS.map((pairs, gi) => (
-            <div key={gi} style={{ display: "contents" }}>
-              {gi > 0 ? <div style={{ gridColumn: "1 / -1", height: 1, background: "rgba(0,0,0,0.15)" }} /> : null}
-              {pairs.map(([cue, contour]) => {
-                const showDrawer = openWord === cue || openWord === contour;
-                return (
-                  <div key={cue} style={{ display: "contents" }}>
-                    <div id={"cell-" + cue}>
-                      <Cell word={cue} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
-                    </div>
-                    <div id={"cell-" + contour}>
-                      <Cell word={contour} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
-                    </div>
-                    {showDrawer ? <Drawer word={openWord} /> : null}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+          {PAIR_GROUPS.flatMap((pairs, gi) => {
+            const items = [];
+            if (gi > 0) {
+              items.push(
+                <div key={"div-" + gi} style={{ gridColumn: "1 / -1", height: 1, background: "rgba(0,0,0,0.15)" }} />
+              );
+            }
+            pairs.forEach(([cue, contour]) => {
+              const showDrawer = openWord === cue || openWord === contour;
+              items.push(
+                <div key={"cue-" + cue} id={"cell-" + cue}>
+                  <Cell word={cue} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
+                </div>
+              );
+              items.push(
+                <div key={"con-" + contour} id={"cell-" + contour}>
+                  <Cell word={contour} selCue={selCue} selContour={selContour} openWord={openWord} onTap={tapWord} />
+                </div>
+              );
+              if (showDrawer) {
+                items.push(<Drawer key={"drawer-" + openWord} word={openWord} />);
+              }
+            });
+            return items;
+          })}
         </div>
       </div>
 
