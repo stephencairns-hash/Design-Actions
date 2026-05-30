@@ -296,12 +296,13 @@ export default function App() {
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
 
       {/* HEADER */}
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: "#fff" }}>
         <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
-          borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
+          fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
           fontWeight: 500, color: "#1a1a1a", minWidth: 0 }}>
           Design Actions
         </div>
+        <div style={{ background: "rgba(0,0,0,0.15)" }} />
         <div onClick={() => setShowInfo(v => !v)}
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
             cursor: "pointer", minWidth: 0 }}>
