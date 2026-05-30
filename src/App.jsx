@@ -303,10 +303,14 @@ export default function App() {
           Design Actions
         </div>
         <div onClick={() => setShowInfo(v => !v)}
-          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 22, cursor: "pointer", minWidth: 0,
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
+            cursor: "pointer", minWidth: 0 }}>
+          <div />
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
+            paddingTop: 22,
             fontFamily: "Georgia, serif", fontSize: 20, color: "#1a1a1a" }}>
-          i
+            i
+          </div>
         </div>
       </div>
 
@@ -454,7 +458,7 @@ export default function App() {
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8, padding: "0 24px" }}>
             Stephen Cairns &middot; David Neudecker<br />
             Joshua Vargas &middot; Denise Lee<br />
-            beta &middot; Design Issues &middot; MIT Press
+            beta &middot; location data &copy; OpenStreetMap
           </p>
         </div>
       ) : null}
