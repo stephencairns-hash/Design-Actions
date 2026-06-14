@@ -412,7 +412,7 @@ export default function App() {
             background: "#fff", overflowY: "auto", borderTop: B_OUTER, zIndex: 100,
             padding: "32px 0 60px" }}>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
-            Design Actions is a toolkit to help engage complex challenges.
+            Design Actions is a toolkit intended to help address complex challenges &mdash; challenges with unclear definition, interdependent conditions, and no established approaches.
           </p>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
             Fifteen <em>cues</em> — verbs that activate inquiry — and fifteen <em>contours</em> — nouns
@@ -449,8 +449,11 @@ export default function App() {
               </div>
             </div>
           </div>
+          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
+            This will generate situated guidance on the next page. Use the arrow to return to the word list and explore again.
+          </p>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 28, padding: "0 24px" }}>
-            This will generate a situated brief for action on the next page. Use the arrow to return to the word list and explore again.
+            Design Actions&rsquo; uses are open: framing a brief, shaping a prototype, guiding construction, drafting a policy, designing an artefact, building a partnership, conducting a critique, or reframing the question.
           </p>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.38)", letterSpacing: ".04em", lineHeight: 1.8, padding: "0 24px" }}>
             Stephen Cairns &middot; David Neudecker<br />
