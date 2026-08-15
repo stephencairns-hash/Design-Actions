@@ -115,7 +115,7 @@ function BriefPage({ selCue, selContour, onBack }) {
   }, []);
 
   return (
-    <div style={{ position: "absolute", inset: 0, background: "#fff", display: "flex", flexDirection: "column", zIndex: 50 }}>
+    <div style={{ position: "absolute", inset: 0, background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column", zIndex: 50 }}>
       <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
         <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif", minWidth: 0 }}>
           Design Actions
@@ -283,7 +283,7 @@ export default function App() {
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column",
+    <div style={{ position: "fixed", inset: 0, background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column",
       fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
@@ -309,7 +309,7 @@ export default function App() {
       </div>
 
       {/* WORD GRID */}
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", background: "#fff" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.flatMap((pairs, gi) => {
             const items = [];
