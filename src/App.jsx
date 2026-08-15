@@ -117,7 +117,7 @@ function BriefPage({ selCue, selContour, onBack }) {
   return (
     <div style={{ position: "absolute", inset: 0, background: "#fff", overflow: "hidden", touchAction: "none", display: "flex", flexDirection: "column", zIndex: 50 }}>
       <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif", minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", paddingLeft: 18, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif", minWidth: 0 }}>
           Design Actions
         </div>
         <div style={{ minWidth: 0 }} />
@@ -196,14 +196,14 @@ function BriefPage({ selCue, selContour, onBack }) {
 
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", background: "#fff" }}>
         {/* Arrow — fills cell, TE-style */}
-        <div onClick={onBack} style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-          paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0, overflow: "hidden" }}>
+        <div onClick={onBack} style={{ display: "flex", alignItems: "center", justifyContent: "center",
+          borderRight: B_INNER, cursor: "pointer", minWidth: 0, overflow: "hidden" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
           </svg>
         </div>
         {/* Location + date — 50% */}
-        <div style={{ display: "flex", alignItems: "flex-start", paddingTop: 20, paddingLeft: 12, borderRight: B_INNER, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", paddingLeft: 12, borderRight: B_INNER, minWidth: 0 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span style={{ fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>
               {location}
@@ -215,8 +215,8 @@ function BriefPage({ selCue, selContour, onBack }) {
         </div>
         {/* Copy icon — centred, same as arrow */}
         <div onClick={onCopy} title="copy brief"
-          style={{ display: "flex", alignItems: "flex-start",
-            justifyContent: "center", paddingTop: 20,
+          style={{ display: "flex", alignItems: "center",
+            justifyContent: "center",
             cursor: "pointer", opacity: copied ? 1 : 0.45, transition: "opacity .2s",
             minWidth: 0, overflow: "hidden" }}>
           {copied ? (
@@ -332,7 +332,7 @@ export default function App() {
 
       {/* HEADER */}
       <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: "#fff" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20,
+        <div style={{ display: "flex", alignItems: "center", paddingLeft: 18,
           fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
           fontWeight: 500, color: "#1a1a1a", minWidth: 0 }}>
           Design Actions
@@ -342,8 +342,7 @@ export default function App() {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
             cursor: "pointer", minWidth: 0 }}>
           <div />
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 22,
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center",
             fontFamily: "Georgia, serif", fontSize: 20, color: "#1a1a1a" }}>
             i
           </div>
@@ -385,15 +384,15 @@ export default function App() {
       <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
         {/* ✕ — classic, centred */}
         <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
-          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 20, borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
+          style={{ display: "flex", alignItems: "center", justifyContent: "center",
+            borderRight: B_INNER, cursor: "pointer", minWidth: 0 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </div>
         {/* CUE */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
-          justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10, paddingRight: 4,
+          justifyContent: "center", paddingLeft: 10, paddingRight: 4,
           borderRight: B_INNER, overflow: "hidden", minWidth: 0 }}>
           <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
             color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
@@ -409,7 +408,7 @@ export default function App() {
         </div>
         {/* CONTOUR */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",
-          justifyContent: "flex-start", paddingTop: 20, paddingLeft: 10, paddingRight: 4,
+          justifyContent: "center", paddingLeft: 10, paddingRight: 4,
           borderRight: B_INNER, overflow: "hidden", minWidth: 0 }}>
           <span style={{ fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase",
             color: "rgba(0,0,0,0.4)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1, whiteSpace: "nowrap" }}>
@@ -428,7 +427,7 @@ export default function App() {
           style={{ display: "flex", alignItems: "center", justifyContent: "center",
             cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0 }}>
           <div style={{
-            width: "min(100%, " + FTR_H + "px)", height: "min(100%, " + FTR_H + "px)",
+            width: "min(calc(100% - 8px), 88px)", height: "min(calc(100% - 8px), 88px)",
             borderRadius: "50%",
             background: bothSelected ? "#1a1a1a" : "transparent",
             border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
