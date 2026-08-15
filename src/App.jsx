@@ -425,15 +425,15 @@ export default function App() {
         </div>
         {/* HERE·NOW — circle button, TE-style */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ display: "flex", alignItems: "flex-start", justifyContent: "center",
-            paddingTop: 0, cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0, overflow: "hidden" }}>
+          style={{ display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0 }}>
           <div style={{
-            width: "100%", aspectRatio: "1", borderRadius: "50%",
+            width: 68, height: 68, borderRadius: "50%",
             background: bothSelected ? "#1a1a1a" : "transparent",
             border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "background .2s, border .2s", marginTop: 0,
-            maxHeight: FTR_H
+            transition: "background .2s, border .2s",
+            flexShrink: 0
           }}>
             <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".1em", textTransform: "uppercase",
               color: bothSelected ? "#fff" : "rgba(0,0,0,0.3)",
