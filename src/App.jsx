@@ -428,7 +428,8 @@ export default function App() {
           style={{ display: "flex", alignItems: "center", justifyContent: "center",
             cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0 }}>
           <div style={{
-            width: 68, height: 68, borderRadius: "50%",
+            width: "min(100%, " + FTR_H + "px)", height: "min(100%, " + FTR_H + "px)",
+            borderRadius: "50%",
             background: bothSelected ? "#1a1a1a" : "transparent",
             border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
