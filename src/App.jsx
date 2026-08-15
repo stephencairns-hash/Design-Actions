@@ -115,7 +115,7 @@ function BriefPage({ selCue, selContour, onBack }) {
   }, []);
 
   return (
-    <div style={{ position: "absolute", inset: 0, background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column", zIndex: 50 }}>
+    <div style={{ position: "absolute", inset: 0, background: "#fff", overflow: "hidden", touchAction: "none", display: "flex", flexDirection: "column", zIndex: 50 }}>
       <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr", background: "#fff" }}>
         <div style={{ display: "flex", alignItems: "flex-start", paddingLeft: 18, paddingTop: 20, borderRight: B_INNER, fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase", fontWeight: 500, color: "#1a1a1a", fontFamily: "'DM Sans', sans-serif", minWidth: 0 }}>
           Design Actions
@@ -132,7 +132,7 @@ function BriefPage({ selCue, selContour, onBack }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", padding: "28px 24px 40px" }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", touchAction: "pan-y", padding: "28px 24px 40px" }}>
         <p style={{ fontSize: 19, fontStyle: "italic", lineHeight: 1.7, fontFamily: "Georgia, serif", color: "#1a1a1a", opacity: 0.9, marginBottom: 28 }}>
           {cueCapital} {selContour} in {location} at {timeStr}, {dateStr}.
           {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
@@ -244,6 +244,48 @@ export default function App() {
   const [showInfo, setShowInfo] = useState(false);
   const scrollRef = useRef(null);
 
+  // Lock the document body against iOS Safari's default scroll/rubber-band behaviour.
+  // Without this, touch gestures on our fixed-position app shell can shift the
+  // whole frame horizontally and vertically as the browser treats them as body scrolls.
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      htmlHeight: html.style.height,
+      htmlPosition: html.style.position,
+      htmlWidth: html.style.width,
+      bodyOverflow: body.style.overflow,
+      bodyHeight: body.style.height,
+      bodyPosition: body.style.position,
+      bodyWidth: body.style.width,
+      bodyOverscroll: body.style.overscrollBehavior,
+      bodyTouchAction: body.style.touchAction,
+    };
+    html.style.overflow = "hidden";
+    html.style.height = "100%";
+    html.style.position = "fixed";
+    html.style.width = "100%";
+    body.style.overflow = "hidden";
+    body.style.height = "100%";
+    body.style.position = "fixed";
+    body.style.width = "100%";
+    body.style.overscrollBehavior = "none";
+    body.style.touchAction = "none";
+    return () => {
+      html.style.overflow = prev.htmlOverflow;
+      html.style.height = prev.htmlHeight;
+      html.style.position = prev.htmlPosition;
+      html.style.width = prev.htmlWidth;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.height = prev.bodyHeight;
+      body.style.position = prev.bodyPosition;
+      body.style.width = prev.bodyWidth;
+      body.style.overscrollBehavior = prev.bodyOverscroll;
+      body.style.touchAction = prev.bodyTouchAction;
+    };
+  }, []);
+
   const snapCellToTop = useCallback((word) => {
     const scroll = scrollRef.current;
     if (!scroll) return;
@@ -283,7 +325,7 @@ export default function App() {
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#fff", overflow: "hidden", display: "flex", flexDirection: "column",
+    <div style={{ position: "fixed", inset: 0, background: "#fff", overflow: "hidden", touchAction: "none", display: "flex", flexDirection: "column",
       fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
@@ -309,7 +351,7 @@ export default function App() {
       </div>
 
       {/* WORD GRID */}
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", background: "#fff" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", touchAction: "pan-y", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.flatMap((pairs, gi) => {
             const items = [];
@@ -412,7 +454,7 @@ export default function App() {
            {showInfo ? (
         <div onClick={() => setShowInfo(false)}
           style={{ position: "absolute", top: HDR_H, left: 0, right: 0, bottom: 0,
-            background: "#fff", overflowY: "auto", overscrollBehavior: "contain", borderTop: B_OUTER, zIndex: 100,
+            background: "#fff", overflowY: "auto", overscrollBehavior: "contain", touchAction: "pan-y", borderTop: B_OUTER, zIndex: 100,
             padding: "32px 0 60px" }}>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
             Design Actions is a toolkit intended to help address complex challenges &mdash; challenges with unclear definition, interdependent conditions, and no established approaches.
