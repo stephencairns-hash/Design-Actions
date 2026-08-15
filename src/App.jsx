@@ -254,8 +254,7 @@ export default function App() {
         if (!tEl) return;
         const cellRect = tEl.getBoundingClientRect();
         const containerRect = scroll.getBoundingClientRect();
-        const topMargin = 12;
-        const delta = cellRect.top - containerRect.top - topMargin;
+        const delta = cellRect.top - containerRect.top;
         scroll.scrollTo({ top: scroll.scrollTop + delta, behavior: "smooth" });
       });
     });
@@ -277,8 +276,8 @@ export default function App() {
     }
   }, [selCue, selContour, openWord, snapCellToTop]);
 
-  // Snap-to-top on drawer open: the tapped cell smoothly scrolls to sit near
-  // the top of the visible grid area (with a 12px margin below the header line).
+  // Snap-to-top on drawer open: the tapped cell smoothly scrolls flush
+  // against the header line, so the word and its description are read together.
   // No snap when the drawer is being closed or when ✕ clears the selection.
 
   const bothSelected = selCue && selContour;
