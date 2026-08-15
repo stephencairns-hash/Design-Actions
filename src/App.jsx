@@ -244,38 +244,42 @@ export default function App() {
   const [showInfo, setShowInfo] = useState(false);
   const scrollRef = useRef(null);
 
+  const snapCellToTop = useCallback((word) => {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    // Wait two frames so the drawer has rendered and layout is settled
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const tEl = document.getElementById("cell-" + word);
+        if (!tEl) return;
+        const cellRect = tEl.getBoundingClientRect();
+        const containerRect = scroll.getBoundingClientRect();
+        const topMargin = 12;
+        const delta = cellRect.top - containerRect.top - topMargin;
+        scroll.scrollTo({ top: scroll.scrollTop + delta, behavior: "smooth" });
+      });
+    });
+  }, []);
+
   const tapWord = useCallback((word) => {
     const isSelected = word === selCue || word === selContour;
     const isOpen = word === openWord;
-    const scroll = scrollRef.current;
 
     if (!isSelected) {
-      let anchorTopBefore = null;
-      if (openWord && scroll) {
-        const tEl = document.getElementById("cell-" + word);
-        if (tEl) anchorTopBefore = tEl.getBoundingClientRect().top;
-      }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
       setOpenWord(word);
-      if (anchorTopBefore !== null && scroll) {
-        requestAnimationFrame(() => {
-          const tEl = document.getElementById("cell-" + word);
-          if (tEl) {
-            const anchorTopAfter = tEl.getBoundingClientRect().top;
-            scroll.scrollTop += (anchorTopAfter - anchorTopBefore);
-          }
-        });
-      }
+      snapCellToTop(word);
     } else if (isOpen) {
       setOpenWord(null);
     } else {
       setOpenWord(word);
+      snapCellToTop(word);
     }
-  }, [selCue, selContour, openWord]);
+  }, [selCue, selContour, openWord, snapCellToTop]);
 
-  // No auto-scroll when drawer opens. The tapped cell stays in place;
-  // the drawer pushes content below it down. If the drawer extends past
-  // the bottom of the visible area, the user can scroll manually.
+  // Snap-to-top on drawer open: the tapped cell smoothly scrolls to sit near
+  // the top of the visible grid area (with a 12px margin below the header line).
+  // No snap when the drawer is being closed or when ✕ clears the selection.
 
   const bothSelected = selCue && selContour;
 
