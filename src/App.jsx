@@ -330,22 +330,20 @@ export default function App() {
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
 
-      {/* HEADER */}
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: "#fff" }}>
-        <div style={{ display: "flex", alignItems: "center", paddingLeft: 18,
+      {/* HEADER — four-column grid matching footer, only middle divider visible */}
+      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
+        <div style={{ gridColumn: "1 / 3", display: "flex", alignItems: "center", paddingLeft: 18,
+          borderRight: B_INNER,
           fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
           fontWeight: 500, color: "#1a1a1a", minWidth: 0 }}>
           Design Actions
         </div>
-        <div style={{ background: "rgba(0,0,0,0.15)" }} />
+        <div />
         <div onClick={() => setShowInfo(v => !v)}
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
-            cursor: "pointer", minWidth: 0 }}>
-          <div />
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center",
+          style={{ display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", minWidth: 0,
             fontFamily: "Georgia, serif", fontSize: 20, color: "#1a1a1a" }}>
-            i
-          </div>
+          i
         </div>
       </div>
 
@@ -427,7 +425,7 @@ export default function App() {
           style={{ display: "flex", alignItems: "center", justifyContent: "center",
             cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0 }}>
           <div style={{
-            width: "min(calc(100% - 8px), 88px)", height: "min(calc(100% - 8px), 88px)",
+            width: "min(calc(100% - 2px), " + (FTR_H - 2) + "px)", height: "min(calc(100% - 2px), " + (FTR_H - 2) + "px)",
             borderRadius: "50%",
             background: bothSelected ? "#1a1a1a" : "transparent",
             border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
