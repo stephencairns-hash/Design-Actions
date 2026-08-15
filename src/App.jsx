@@ -283,7 +283,7 @@ export default function App() {
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100dvh", background: "#fff", display: "flex", flexDirection: "column",
+    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column",
       fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
