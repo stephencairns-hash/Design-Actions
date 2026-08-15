@@ -132,7 +132,7 @@ function BriefPage({ selCue, selContour, onBack }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "28px 24px 40px" }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", padding: "28px 24px 40px" }}>
         <p style={{ fontSize: 19, fontStyle: "italic", lineHeight: 1.7, fontFamily: "Georgia, serif", color: "#1a1a1a", opacity: 0.9, marginBottom: 28 }}>
           {cueCapital} {selContour} in {location} at {timeStr}, {dateStr}.
           {!ready ? <span style={{ animation: "daBlink 1.6s ease-in-out infinite", fontSize: 18, marginLeft: 3, fontWeight: 200 }}>|</span> : null}
@@ -283,7 +283,7 @@ export default function App() {
   const bothSelected = selCue && selContour;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#fff", display: "flex", flexDirection: "column",
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100dvh", background: "#fff", display: "flex", flexDirection: "column",
       fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
@@ -309,7 +309,7 @@ export default function App() {
       </div>
 
       {/* WORD GRID */}
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "#fff" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain", background: "#fff" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
           {PAIR_GROUPS.flatMap((pairs, gi) => {
             const items = [];
@@ -359,7 +359,7 @@ export default function App() {
           </span>
           {selCue ? (
             <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em",
-              fontFamily: "'DM Sans', sans-serif", marginTop: 5, lineHeight: 1,
+              fontFamily: "'DM Sans', sans-serif", marginTop: 4, lineHeight: 1.2,
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
               {selCue}
             </span>
@@ -375,7 +375,7 @@ export default function App() {
           </span>
           {selContour ? (
             <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a", letterSpacing: "-.01em",
-              fontFamily: "'DM Sans', sans-serif", marginTop: 5, lineHeight: 1,
+              fontFamily: "'DM Sans', sans-serif", marginTop: 4, lineHeight: 1.2,
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
               {selContour}
             </span>
@@ -412,7 +412,7 @@ export default function App() {
            {showInfo ? (
         <div onClick={() => setShowInfo(false)}
           style={{ position: "absolute", top: HDR_H, left: 0, right: 0, bottom: 0,
-            background: "#fff", overflowY: "auto", borderTop: B_OUTER, zIndex: 100,
+            background: "#fff", overflowY: "auto", overscrollBehavior: "contain", borderTop: B_OUTER, zIndex: 100,
             padding: "32px 0 60px" }}>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
             Design Actions is a toolkit intended to help address complex challenges &mdash; challenges with unclear definition, interdependent conditions, and no established approaches.
