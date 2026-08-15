@@ -256,7 +256,7 @@ export default function App() {
         if (tEl) anchorTopBefore = tEl.getBoundingClientRect().top;
       }
       if (isCue(word)) setSelCue(word); else setSelContour(word);
-      setOpenWord(null);
+      setOpenWord(word);
       if (anchorTopBefore !== null && scroll) {
         requestAnimationFrame(() => {
           const tEl = document.getElementById("cell-" + word);
@@ -266,10 +266,10 @@ export default function App() {
           }
         });
       }
-    } else if (!isOpen) {
-      setOpenWord(word);
-    } else {
+    } else if (isOpen) {
       setOpenWord(null);
+    } else {
+      setOpenWord(word);
     }
   }, [selCue, selContour, openWord]);
 
@@ -415,9 +415,9 @@ export default function App() {
             Design Actions is a toolkit intended to help address complex challenges &mdash; challenges with unclear definition, interdependent conditions, and no established approaches.
           </p>
           <p style={{ fontFamily: "Georgia, serif", fontSize: 19, lineHeight: 1.7, color: "#1a1a1a", marginBottom: 22, padding: "0 24px" }}>
-            Fifteen <em>cues</em> — verbs that activate inquiry — and fifteen <em>contours</em> — nouns
-            that frame the terrain of action. Tap one to select. Tap again to read the description.
-            Tap ✕ to clear. Pair a cue and a contour to activate the <em>here&middot;now</em> prompt:
+            Fifteen <em>cues</em> &mdash; verbs that activate inquiry &mdash; and fifteen <em>contours</em> &mdash; nouns
+            that frame the terrain of action. Tap a word to see its description. Tap ✕ to clear.
+            Pair a cue and a contour to activate the <em>here&middot;now</em> prompt:
           </p>
           <div style={{ marginBottom: 22 }}>
             <div style={{ borderTop: B_INNER, borderLeft: B_INNER, borderRight: B_INNER }}>
