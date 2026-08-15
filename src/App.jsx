@@ -326,12 +326,14 @@ export default function App() {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "#fff", overflow: "hidden", touchAction: "none", display: "flex", flexDirection: "column",
-      fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased",
-      paddingTop: "env(safe-area-inset-top)",
-      paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}>
+      fontFamily: "'DM Sans', sans-serif", WebkitFontSmoothing: "antialiased" }}>
 
-      {/* HEADER — four-column grid matching footer, only middle divider visible */}
-      <div style={{ flexShrink: 0, height: HDR_H, borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
+      {/* HEADER — four-column grid matching footer, only middle divider visible.
+          Absorbs safe-area-inset-top so header extends behind the notch. */}
+      <div style={{ flexShrink: 0, height: "calc(" + HDR_H + "px + env(safe-area-inset-top))",
+          paddingTop: "env(safe-area-inset-top)",
+          borderBottom: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff",
+          boxSizing: "border-box" }}>
         <div style={{ gridColumn: "1 / 3", display: "flex", alignItems: "center", paddingLeft: 18,
           borderRight: B_INNER,
           fontSize: 18, letterSpacing: ".06em", textTransform: "uppercase",
@@ -378,8 +380,12 @@ export default function App() {
         </div>
       </div>
 
-      {/* FOOTER — 4 equal grid columns at exactly 25% each */}
-      <div style={{ flexShrink: 0, height: FTR_H, borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff" }}>
+      {/* FOOTER — 4 equal grid columns at exactly 25% each.
+          Absorbs safe-area-inset-bottom so footer extends behind the home indicator. */}
+      <div style={{ flexShrink: 0, height: "calc(" + FTR_H + "px + env(safe-area-inset-bottom))",
+          paddingBottom: "env(safe-area-inset-bottom)",
+          borderTop: B_OUTER, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", background: "#fff",
+          boxSizing: "border-box" }}>
         {/* ✕ — classic, centred */}
         <div onClick={() => { setSelCue(null); setSelContour(null); setOpenWord(null); }}
           style={{ display: "flex", alignItems: "center", justifyContent: "center",
@@ -420,13 +426,14 @@ export default function App() {
             </span>
           ) : null}
         </div>
-        {/* HERE·NOW — circle button, TE-style */}
+        {/* HERE·NOW — circle button, TE-style.
+            Sized by height (fills cell top-to-bottom) with aspectRatio: 1 forcing
+            width to match. Right-anchored so it snugs against the right edge. */}
         <div onClick={() => bothSelected && setScreen("brief")}
-          style={{ display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0 }}>
+          style={{ display: "flex", alignItems: "stretch", justifyContent: "flex-end",
+            cursor: bothSelected ? "pointer" : "not-allowed", minWidth: 0, overflow: "hidden" }}>
           <div style={{
-            width: "min(calc(100% - 2px), " + (FTR_H - 2) + "px)", height: "min(calc(100% - 2px), " + (FTR_H - 2) + "px)",
-            borderRadius: "50%",
+            height: "100%", aspectRatio: "1", borderRadius: "50%",
             background: bothSelected ? "#1a1a1a" : "transparent",
             border: bothSelected ? "none" : "1px solid rgba(0,0,0,0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
